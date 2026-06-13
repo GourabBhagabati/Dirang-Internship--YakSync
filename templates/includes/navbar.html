@@ -1,0 +1,22 @@
+<div class="navbar-left">
+    <h1 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary);">
+        {% block page_title %}Dashboard{% endblock %}
+    </h1>
+</div>
+
+<div class="navbar-right">
+    <div class="user-info">
+        <div class="user-avatar">
+            {{ user.username|slice:":1"|upper }}
+        </div>
+        <div class="user-details">
+            <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                {% if user.profile %}{{ user.profile.get_role_display }}{% endif %}
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'authentication:logout' %}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">
+        Logout
+    </a>
+</div>

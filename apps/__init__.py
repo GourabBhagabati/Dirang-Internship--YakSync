@@ -1,0 +1,1 @@
+# YakSync Django Apps Package

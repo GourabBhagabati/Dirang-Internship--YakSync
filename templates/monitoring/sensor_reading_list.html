@@ -1,0 +1,389 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Monitoring - YakSync{% endblock %}
+
+{% block page_title %}Monitoring{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <h2 class="page-title">Sensor Monitoring</h2>
+        <p class="page-subtitle">Review livestock sensor readings and abnormal activity indicators</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body" style="padding: 1.5rem;">
+        <form method="get" class="filters-form">
+            <div class="filters-row">
+                <div class="filter-group filter-search">
+                    <input type="text" name="search" class="form-input" placeholder="Search animal, device, or unit" value="{{ search_query }}">
+                </div>
+
+                <div class="filter-group">
+                    <select name="animal" class="form-input">
+                        <option value="">All Animals</option>
+                        {% for animal in animals %}
+                            <option value="{{ animal.pk }}" {% if selected_animal == animal.pk|stringformat:"s" %}selected{% endif %}>{{ animal.animal_id }} - {{ animal.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <select name="device" class="form-input">
+                        <option value="">All Devices</option>
+                        {% for device in devices %}
+                            <option value="{{ device.pk }}" {% if selected_device == device.pk|stringformat:"s" %}selected{% endif %}>{{ device.device_id }} - {{ device.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <select name="sensor_type" class="form-input">
+                        <option value="">All Sensor Types</option>
+                        {% for value, label in sensor_type_choices %}
+                            <option value="{{ value }}" {% if selected_sensor_type == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <input type="date" name="start_date" class="form-input" value="{{ selected_start_date }}" aria-label="Start date">
+                </div>
+
+                <div class="filter-group">
+                    <input type="date" name="end_date" class="form-input" value="{{ selected_end_date }}" aria-label="End date">
+                </div>
+
+                <label class="checkbox-filter">
+                    <input type="checkbox" name="abnormal_only" {% if abnormal_only %}checked{% endif %}>
+                    <span>Abnormal only</span>
+                </label>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{% url 'monitoring:list' %}" class="btn btn-secondary">Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if readings %}
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Animal</th>
+                        <th>Device</th>
+                        <th>Sensor Type</th>
+                        <th>Reading</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reading in readings %}
+                    <tr class="{% if reading.is_abnormal %}row-abnormal{% endif %}">
+                        <td>{{ reading.timestamp|date:"M d, Y g:i A" }}</td>
+                        <td>
+                            <a href="{% url 'animals:detail' reading.animal.pk %}">
+                                <strong>{{ reading.animal.animal_id }}</strong>
+                            </a>
+                            <div class="text-muted">{{ reading.animal.name }}</div>
+                        </td>
+                        <td>
+                            <a href="{% url 'devices:detail' reading.device.pk %}">{{ reading.device.device_id }}</a>
+                            <div class="text-muted">{{ reading.device.name }}</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ reading.sensor_type }}">{{ reading.get_sensor_type_display }}</span>
+                        </td>
+                        <td><strong>{{ reading.value }}</strong> {{ reading.unit }}</td>
+                        <td>
+                            {% if reading.is_abnormal %}
+                                <span class="badge badge-abnormal">Abnormal</span>
+                            {% else %}
+                                <span class="badge badge-normal">Normal</span>
+                            {% endif %}
+                        </td>
+                        <td class="actions-cell">
+                            <a href="{% url 'monitoring:detail' reading.pk %}" class="btn-icon" title="View History">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if is_paginated %}
+<div class="pagination-container">
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">Previous</a>
+        {% endif %}
+
+        <span class="pagination-info">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">Last</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<div class="card">
+    <div class="card-body">
+        <div class="empty-state">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">Monitoring</div>
+            <h3>No Sensor Readings Found</h3>
+            <p>{% if search_query or selected_animal or selected_device or selected_sensor_type or selected_start_date or selected_end_date or abnormal_only %}
+                No sensor readings match your search criteria. Try adjusting your filters.
+            {% else %}
+                Sensor readings will appear here once IoT devices start reporting data.
+            {% endif %}</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.filters-form {
+    width: 100%;
+}
+
+.filters-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr auto auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.form-input {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.checkbox-filter {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: var(--bg-color);
+}
+
+.data-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+    background: var(--bg-color);
+}
+
+.row-abnormal {
+    background: #fff8f8;
+}
+
+.text-muted {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.badge-temperature {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.badge-movement {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.badge-reproductive_indicator {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.badge-normal {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.badge-abnormal {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    transition: var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.btn-icon:hover {
+    background: var(--secondary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.pagination-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.pagination-btn:hover {
+    background: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+}
+
+.pagination-info {
+    padding: 0.5rem 1rem;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 1280px) {
+    .filters-row {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .filter-search {
+        grid-column: span 3;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .filters-row,
+    .filter-search {
+        grid-template-columns: 1fr;
+        grid-column: span 1;
+    }
+
+    .filter-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

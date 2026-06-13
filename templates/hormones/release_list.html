@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hormone Releases - YakSync{% endblock %}
+{% block page_title %}Hormone Releases{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <h2 class="page-title">Hormone Release History</h2>
+        <p class="page-subtitle">Track hormone release events and inventory usage</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'hormones:reservoir_list' %}" class="btn btn-secondary">Reservoirs</a>
+        <a href="{% url 'hormones:release_create' %}" class="btn btn-primary">Record Release</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body" style="padding: 1.5rem;">
+        <form method="get" class="filters-form">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <select name="animal" class="form-input">
+                        <option value="">All Animals</option>
+                        {% for animal in animals %}
+                            <option value="{{ animal.pk }}" {% if selected_animal == animal.pk|stringformat:"s" %}selected{% endif %}>{{ animal.animal_id }} - {{ animal.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <input type="text" name="hormone_type" class="form-input" placeholder="Hormone type" value="{{ hormone_type_query }}">
+                </div>
+
+                <div class="filter-group">
+                    <input type="date" name="start_date" class="form-input" value="{{ selected_start_date }}" aria-label="Start date">
+                </div>
+
+                <div class="filter-group">
+                    <input type="date" name="end_date" class="form-input" value="{{ selected_end_date }}" aria-label="End date">
+                </div>
+
+                <div class="filter-group">
+                    <select name="user" class="form-input">
+                        <option value="">All Users</option>
+                        {% for user in users %}
+                            <option value="{{ user.pk }}" {% if selected_user == user.pk|stringformat:"s" %}selected{% endif %}>{{ user.get_full_name|default:user.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{% url 'hormones:release_list' %}" class="btn btn-secondary">Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if releases %}
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date and Time</th>
+                        <th>Animal</th>
+                        <th>Hormone Reservoir</th>
+                        <th>Quantity Released</th>
+                        <th>Performed By</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for release in releases %}
+                    <tr>
+                        <td>{{ release.timestamp|date:"M d, Y g:i A" }}</td>
+                        <td><a href="{% url 'animals:detail' release.animal.pk %}"><strong>{{ release.animal.animal_id }}</strong></a><div class="text-muted">{{ release.animal.name }}</div></td>
+                        <td><a href="{% url 'hormones:reservoir_detail' release.reservoir.pk %}">{{ release.reservoir.hormone_type }}</a></td>
+                        <td><strong>{{ release.quantity }}</strong> {{ release.reservoir.unit }}</td>
+                        <td>{% if release.performed_by %}{{ release.performed_by.get_full_name|default:release.performed_by.username }}{% else %}<span class="text-muted">System</span>{% endif %}</td>
+                        <td>{% if release.notes %}{{ release.notes|truncatechars:40 }}{% else %}<span class="text-muted">None</span>{% endif %}</td>
+                        <td class="actions-cell"><a href="{% url 'hormones:release_detail' release.pk %}" class="btn-icon">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if is_paginated %}
+<div class="pagination-container">
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">Previous</a>
+        {% endif %}
+        <span class="pagination-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">Last</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% else %}
+<div class="card">
+    <div class="card-body">
+        <div class="empty-state">
+            <h3>No Releases Found</h3>
+            <p>No hormone release records match the selected criteria.</p>
+            <a href="{% url 'hormones:release_create' %}" class="btn btn-primary" style="margin-top: 1rem;">Record First Release</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.page-title { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; }
+.page-subtitle, .text-muted { color: var(--text-secondary); }
+.text-muted { font-size: 0.85rem; margin-top: 0.25rem; }
+.page-actions, .filter-actions, .actions-cell { display: flex; gap: 0.5rem; }
+.filters-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto; gap: 1rem; align-items: end; }
+.form-input { padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; transition: var(--transition); width: 100%; }
+.form-input:focus { outline: none; border-color: var(--secondary-color); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+.table-responsive { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table thead { background: var(--bg-color); }
+.data-table th { padding: 1rem; text-align: left; font-weight: 600; color: var(--text-primary); border-bottom: 2px solid var(--border-color); white-space: nowrap; }
+.data-table td { padding: 1rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+.data-table tbody tr:hover { background: var(--bg-color); }
+.btn-icon { padding: 0.5rem 0.75rem; border-radius: 6px; background: var(--bg-color); color: var(--text-primary); text-decoration: none; transition: var(--transition); white-space: nowrap; }
+.btn-icon:hover { background: var(--secondary-color); color: white; transform: translateY(-2px); }
+.pagination-container { display: flex; justify-content: center; margin-top: 2rem; }
+.pagination { display: flex; gap: 0.5rem; align-items: center; }
+.pagination-btn { padding: 0.5rem 1rem; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-primary); text-decoration: none; transition: var(--transition); }
+.pagination-btn:hover { background: var(--secondary-color); color: white; border-color: var(--secondary-color); }
+.pagination-info { padding: 0.5rem 1rem; color: var(--text-secondary); }
+@media (max-width: 1280px) { .filters-row { grid-template-columns: 1fr 1fr 1fr; } }
+@media (max-width: 768px) { .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; } .page-actions, .filter-actions { width: 100%; flex-direction: column; } .filters-row { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}

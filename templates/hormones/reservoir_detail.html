@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ reservoir.hormone_type }} Reservoir - YakSync{% endblock %}
+{% block page_title %}Reservoir Details{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <h2 class="page-title">{{ reservoir.hormone_type }}</h2>
+        <p class="page-subtitle">{{ reservoir.current_quantity }} / {{ reservoir.initial_quantity }} {{ reservoir.unit }} available</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'hormones:reservoir_list' %}" class="btn btn-secondary">Back to Reservoirs</a>
+        <a href="{% url 'hormones:release_create' %}" class="btn btn-secondary">Record Release</a>
+        <a href="{% url 'hormones:reservoir_edit' reservoir.pk %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'hormones:reservoir_delete' reservoir.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <div class="card">
+        <div class="card-header"><h3 class="card-title">Inventory Information</h3></div>
+        <div class="card-body">
+            <div class="detail-row">
+                <div class="detail-item"><div class="detail-label">Hormone Type</div><div class="detail-value"><strong>{{ reservoir.hormone_type }}</strong></div></div>
+                <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">{% if reservoir.is_low %}<span class="badge badge-low badge-large">Low Stock</span>{% else %}<span class="badge badge-normal badge-large">Normal</span>{% endif %}</div></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-item"><div class="detail-label">Initial Quantity</div><div class="detail-value">{{ reservoir.initial_quantity }} {{ reservoir.unit }}</div></div>
+                <div class="detail-item"><div class="detail-label">Current Quantity</div><div class="detail-value">{{ reservoir.current_quantity }} {{ reservoir.unit }}</div></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-item"><div class="detail-label">Low Threshold</div><div class="detail-value">{{ reservoir.low_threshold }} {{ reservoir.unit }}</div></div>
+                <div class="detail-item"><div class="detail-label">Unit</div><div class="detail-value">{{ reservoir.unit }}</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h3 class="card-title">System Information</h3></div>
+        <div class="card-body">
+            <div class="detail-row">
+                <div class="detail-item"><div class="detail-label">Created At</div><div class="detail-value">{{ reservoir.created_at|date:"F d, Y g:i A" }}</div></div>
+                <div class="detail-item"><div class="detail-label">Last Updated</div><div class="detail-value">{{ reservoir.updated_at|date:"F d, Y g:i A" }}</div></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-item"><div class="detail-label">Database ID</div><div class="detail-value">#{{ reservoir.pk }}</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3 class="card-title">Recent Releases</h3></div>
+    <div class="card-body" style="padding: 0;">
+        {% if recent_releases %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead><tr><th>Date</th><th>Animal</th><th>Quantity</th><th>Performed By</th><th>Actions</th></tr></thead>
+                <tbody>
+                    {% for release in recent_releases %}
+                    <tr>
+                        <td>{{ release.timestamp|date:"M d, Y g:i A" }}</td>
+                        <td>{{ release.animal.animal_id }} - {{ release.animal.name }}</td>
+                        <td>{{ release.quantity }} {{ reservoir.unit }}</td>
+                        <td>{% if release.performed_by %}{{ release.performed_by.get_full_name|default:release.performed_by.username }}{% else %}System{% endif %}</td>
+                        <td><a href="{% url 'hormones:release_detail' release.pk %}" class="btn-icon">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state"><h3>No Releases Recorded</h3><p>Release history for this reservoir will appear here.</p></div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.page-title { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; }
+.page-subtitle { color: var(--text-secondary); font-size: 1rem; }
+.page-actions { display: flex; gap: 0.75rem; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+.detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+.detail-row:last-child { margin-bottom: 0; }
+.detail-item { display: flex; flex-direction: column; gap: 0.5rem; }
+.detail-label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+.detail-value { font-size: 1rem; color: var(--text-primary); }
+.badge { padding: 0.375rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
+.badge-large { padding: 0.5rem 1rem; font-size: 0.875rem; }
+.badge-normal { background: #e8f5e9; color: #388e3c; }
+.badge-low { background: #fff3e0; color: #f57c00; }
+.table-responsive { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table thead { background: var(--bg-color); }
+.data-table th, .data-table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+.data-table th { font-weight: 600; color: var(--text-primary); border-bottom-width: 2px; white-space: nowrap; }
+.btn-icon { padding: 0.5rem 0.75rem; border-radius: 6px; background: var(--bg-color); color: var(--text-primary); text-decoration: none; transition: var(--transition); }
+.btn-icon:hover { background: var(--secondary-color); color: white; transform: translateY(-2px); }
+@media (max-width: 1024px) { .detail-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; } .page-actions { width: 100%; flex-direction: column; } .detail-row { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}

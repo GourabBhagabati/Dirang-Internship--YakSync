@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Treatment Protocols - YakSync{% endblock %}
+
+{% block page_title %}Treatment Protocols{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <h2 class="page-title">Treatment Protocols</h2>
+        <p class="page-subtitle">Manage reproductive treatment protocols and steps</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'protocols:create' %}" class="btn btn-primary">
+            ➕ Create Protocol
+        </a>
+    </div>
+</div>
+
+<!-- Search Section -->
+<div class="card">
+    <div class="card-body" style="padding: 1.5rem;">
+        <form method="get" class="filters-form">
+            <div class="filters-row" style="grid-template-columns: 1fr auto;">
+                <div class="filter-group">
+                    <input type="text" name="search" class="form-input" placeholder="🔍 Search by protocol name or description" value="{{ search_query }}">
+                </div>
+                
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a href="{% url 'protocols:list' %}" class="btn btn-secondary">Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Protocols List -->
+{% if protocols %}
+<div class="protocols-grid">
+    {% for protocol in protocols %}
+    <div class="card protocol-card">
+        <div class="card-header">
+            <h3 class="card-title">{{ protocol.name }}</h3>
+            <span class="badge badge-info">{{ protocol.step_count }} step{{ protocol.step_count|pluralize }}</span>
+        </div>
+        <div class="card-body">
+            <p class="protocol-description">{{ protocol.description|truncatewords:20 }}</p>
+            
+            <div class="protocol-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Duration:</span>
+                    <span class="meta-value">{{ protocol.duration_days }} day{{ protocol.duration_days|pluralize }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Created by:</span>
+                    <span class="meta-value">{{ protocol.created_by.get_full_name|default:protocol.created_by.username|default:"System" }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Created:</span>
+                    <span class="meta-value">{{ protocol.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            
+            <div class="card-actions">
+                <a href="{% url 'protocols:detail' protocol.pk %}" class="btn btn-primary btn-sm">View Details</a>
+                <a href="{% url 'protocols:edit' protocol.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+                <a href="{% url 'protocols:delete' protocol.pk %}" class="btn btn-danger btn-sm">Delete</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="pagination-container">
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">« First</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">‹ Previous</a>
+        {% endif %}
+        
+        <span class="pagination-info">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">Next ›</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">Last »</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<div class="card">
+    <div class="card-body">
+        <div class="empty-state">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
+            <h3>No Treatment Protocols Found</h3>
+            <p>{% if search_query %}
+                No protocols match your search criteria.
+            {% else %}
+                Start by creating your first treatment protocol.
+            {% endif %}</p>
+            <a href="{% url 'protocols:create' %}" class="btn btn-primary" style="margin-top: 1rem;">
+                ➕ Create First Protocol
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.filters-form {
+    width: 100%;
+}
+
+.filters-row {
+    display: grid;
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.form-input {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.protocols-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.protocol-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.protocol-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.protocol-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    min-height: 3rem;
+}
+
+.protocol-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 8px;
+}
+
+.meta-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.meta-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.meta-value {
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-info {
+    background: #e3f2fd;
+    color: var(--secondary-color);
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.pagination-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.pagination-btn:hover {
+    background: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+}
+
+.pagination-info {
+    padding: 0.5rem 1rem;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .protocols-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

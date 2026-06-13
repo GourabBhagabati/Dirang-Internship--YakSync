@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sensor Reading #{{ reading.pk }} - YakSync{% endblock %}
+
+{% block page_title %}Monitoring Details{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <h2 class="page-title">{{ reading.get_sensor_type_display }} Reading</h2>
+        <p class="page-subtitle">{{ reading.animal.animal_id }} - {{ reading.timestamp|date:"F d, Y g:i A" }}</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'monitoring:list' %}" class="btn btn-secondary">Back to Monitoring</a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Reading Information</h3>
+        </div>
+        <div class="card-body">
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Sensor Type</div>
+                    <div class="detail-value">
+                        <span class="badge badge-{{ reading.sensor_type }}">{{ reading.get_sensor_type_display }}</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">
+                        {% if reading.is_abnormal %}
+                            <span class="badge badge-abnormal badge-large">Abnormal</span>
+                        {% else %}
+                            <span class="badge badge-normal badge-large">Normal</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Value</div>
+                    <div class="detail-value reading-value">{{ reading.value }} {{ reading.unit }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Timestamp</div>
+                    <div class="detail-value">{{ reading.timestamp|date:"F d, Y g:i A" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Linked Records</h3>
+        </div>
+        <div class="card-body">
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Animal</div>
+                    <div class="detail-value">
+                        <a href="{% url 'animals:detail' reading.animal.pk %}">
+                            {{ reading.animal.animal_id }} - {{ reading.animal.name }}
+                        </a>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Device</div>
+                    <div class="detail-value">
+                        <a href="{% url 'devices:detail' reading.device.pk %}">
+                            {{ reading.device.device_id }} - {{ reading.device.name }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Database ID</div>
+                    <div class="detail-value">#{{ reading.pk }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Recent Related History</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        {% if related_history %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Device</th>
+                            <th>Reading</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in related_history %}
+                        <tr class="{% if item.is_abnormal %}row-abnormal{% endif %}">
+                            <td>{{ item.timestamp|date:"M d, Y g:i A" }}</td>
+                            <td>{{ item.device.device_id }}</td>
+                            <td><strong>{{ item.value }}</strong> {{ item.unit }}</td>
+                            <td>
+                                {% if item.is_abnormal %}
+                                    <span class="badge badge-abnormal">Abnormal</span>
+                                {% else %}
+                                    <span class="badge badge-normal">Normal</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'monitoring:detail' item.pk %}" class="btn-icon">View</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3>No Related History</h3>
+                <p>No other readings exist for this animal and sensor type yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.page-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.reading-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.badge-large {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.badge-temperature {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.badge-movement {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.badge-reproductive_indicator {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.badge-normal {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.badge-abnormal {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: var(--bg-color);
+}
+
+.data-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.data-table tbody tr:hover {
+    background: var(--bg-color);
+}
+
+.row-abnormal {
+    background: #fff8f8;
+}
+
+.btn-icon {
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    transition: var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background: var(--secondary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 1024px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .detail-row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

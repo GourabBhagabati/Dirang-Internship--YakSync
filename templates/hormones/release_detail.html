@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hormone Release #{{ release.pk }} - YakSync{% endblock %}
+{% block page_title %}Release Details{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <h2 class="page-title">{{ release.reservoir.hormone_type }} Release</h2>
+        <p class="page-subtitle">{{ release.animal.animal_id }} - {{ release.timestamp|date:"F d, Y g:i A" }}</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'hormones:release_list' %}" class="btn btn-secondary">Back to Releases</a>
+        <a href="{% url 'hormones:release_create' %}" class="btn btn-primary">Record Release</a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <div class="card">
+        <div class="card-header"><h3 class="card-title">Release Information</h3></div>
+        <div class="card-body">
+            <div class="detail-row">
+                <div class="detail-item"><div class="detail-label">Animal</div><div class="detail-value"><a href="{% url 'animals:detail' release.animal.pk %}">{{ release.animal.animal_id }} - {{ release.animal.name }}</a></div></div>
+                <div class="detail-item"><div class="detail-label">Hormone Reservoir</div><div class="detail-value"><a href="{% url 'hormones:reservoir_detail' release.reservoir.pk %}">{{ release.reservoir.hormone_type }}</a></div></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-item"><div class="detail-label">Quantity Released</div><div class="detail-value release-value">{{ release.quantity }} {{ release.reservoir.unit }}</div></div>
+                <div class="detail-item"><div class="detail-label">Date and Time</div><div class="detail-value">{{ release.timestamp|date:"F d, Y g:i A" }}</div></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-item"><div class="detail-label">Performed By</div><div class="detail-value">{% if release.performed_by %}{{ release.performed_by.get_full_name|default:release.performed_by.username }}{% else %}System{% endif %}</div></div>
+                <div class="detail-item"><div class="detail-label">Database ID</div><div class="detail-value">#{{ release.pk }}</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h3 class="card-title">Notes</h3></div>
+        <div class="card-body">
+            {% if release.notes %}
+                <p class="notes-text">{{ release.notes }}</p>
+            {% else %}
+                <p class="text-muted">No notes were added for this release.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.page-title { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; }
+.page-subtitle, .text-muted { color: var(--text-secondary); }
+.page-actions { display: flex; gap: 0.75rem; }
+.detail-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+.detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+.detail-row:last-child { margin-bottom: 0; }
+.detail-item { display: flex; flex-direction: column; gap: 0.5rem; }
+.detail-label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+.detail-value { font-size: 1rem; color: var(--text-primary); }
+.release-value { font-size: 1.5rem; font-weight: 700; }
+.notes-text { color: var(--text-primary); line-height: 1.6; }
+@media (max-width: 1024px) { .detail-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; } .page-actions { width: 100%; flex-direction: column; } .detail-row { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}

@@ -1,0 +1,348 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block title %}Dashboard - YakSync{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-hero">
+    <div class="hero-overlay">
+
+        <div class="dashboard-welcome">
+            <h2>
+                Welcome back, {{ user.get_full_name|default:user.username }}!
+            </h2>
+            <p>
+                Monitor your livestock health, IoT devices, and farm operations in real time.
+            </p>
+        </div>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon animal-icon">
+                    🐄
+                </div>
+
+                <div class="stat-content">
+                    <div class="stat-value">{{ total_animals }}</div>
+                    <div class="stat-label">
+                        Total Animals
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon device-icon">
+                    📡
+                </div>
+
+                <div class="stat-content">
+                    <div class="stat-value">{{ total_devices }}</div>
+                    <div class="stat-label">
+                        Total Devices
+                    </div>
+                    <div class="stat-sublabel">
+                        {{ active_devices }} active
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon protocol-icon">
+                    📋
+                </div>
+
+                <div class="stat-content">
+                    <div class="stat-value">
+                        {{ active_protocols }}
+                    </div>
+
+                    <div class="stat-label">
+                        Active Protocols
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon alert-icon">
+                    🚨
+                </div>
+
+                <div class="stat-content">
+                    <div class="stat-value">
+                        {{ active_alerts }}
+                    </div>
+
+                    <div class="stat-label">
+                        Active Alerts
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<div class="dashboard-row">
+
+    <div class="dashboard-col-8">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h3 class="card-title">
+                    Recent Alerts
+                </h3>
+            </div>
+
+
+            <div class="card-body">
+
+                {% if recent_alerts %}
+
+                <div class="alert-list">
+
+                    {% for alert in recent_alerts %}
+
+                    <div class="alert-item severity-{{ alert.severity }}">
+
+                        <div class="alert-icon">
+
+                            {% if alert.severity == 'critical' %}
+                            ⚠️
+                            {% elif alert.severity == 'warning' %}
+                            ⚡
+                            {% else %}
+                            ℹ️
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="alert-details">
+
+                            <div class="alert-title">
+                                {{ alert.title }}
+                            </div>
+
+
+                            <div class="alert-meta">
+                                {{ alert.get_alert_type_display }}
+                                •
+                                {{ alert.timestamp|timesince }} ago
+                            </div>
+
+                        </div>
+
+
+                        <div class="alert-badge badge-{{ alert.severity }}">
+                            {{ alert.get_severity_display }}
+                        </div>
+
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                {% else %}
+
+                <div class="empty-state">
+                    <p>
+                        ✅ No active alerts. System running smoothly!
+                    </p>
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-col-4">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h3 class="card-title">
+                    Hormone Status
+                </h3>
+            </div>
+
+
+            <div class="card-body">
+
+
+                {% if hormone_reservoirs %}
+
+
+                <div class="hormone-list">
+
+
+                    {% for reservoir in hormone_reservoirs %}
+
+
+                    <div class="hormone-item">
+
+
+                        <div class="hormone-name">
+                            {{ reservoir.hormone_type }}
+                        </div>
+
+
+                        <div class="hormone-progress">
+
+
+                            <div class="progress-bar">
+
+
+                                <div class="progress-fill"
+                                style="width: {% widthratio reservoir.current_quantity reservoir.initial_quantity 100 %}%;
+                                background:
+                                {% if reservoir.is_low %}
+                                var(--danger-color)
+                                {% else %}
+                                var(--success-color)
+                                {% endif %};">
+                                </div>
+
+
+                            </div>
+
+
+                            <div class="hormone-quantity">
+                                {{ reservoir.current_quantity }}
+                                /
+                                {{ reservoir.initial_quantity }}
+                                {{ reservoir.unit }}
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+
+                {% else %}
+
+                <div class="empty-state">
+                    <p>
+                        No hormone reservoirs configured
+                    </p>
+                </div>
+
+                {% endif %}
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-header">
+
+        <h3 class="card-title">
+            Recent Activity
+        </h3>
+
+    </div>
+
+
+    <div class="card-body">
+
+        {% if recent_activities %}
+
+        <div class="activity-list">
+
+            {% for log in recent_activities %}
+
+            <div class="activity-item">
+
+                <div class="activity-icon">
+
+                    {% if log.action_type == 'create' %}
+                    ➕
+                    {% elif log.action_type == 'update' %}
+                    ✏️
+                    {% elif log.action_type == 'delete' %}
+                    🗑️
+                    {% elif log.action_type == 'login' %}
+                    🔓
+                    {% else %}
+                    📝
+                    {% endif %}
+
+                </div>
+
+
+                <div class="activity-details">
+
+                    <div class="activity-text">
+                        <strong>
+                            {{ log.user.username|default:'System' }}
+                        </strong>
+                        {{ log.description }}
+                    </div>
+
+
+                    <div class="activity-time">
+                        {{ log.timestamp|timesince }} ago
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <p>
+                No recent activity
+            </p>
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+{% endblock %}

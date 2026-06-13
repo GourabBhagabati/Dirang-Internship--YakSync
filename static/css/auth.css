@@ -1,0 +1,227 @@
+/* Authentication Pages Styles */
+/* .auth-layout {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+} */
+
+.auth-layout {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+
+    background:
+        linear-gradient(
+            rgba(228, 255, 203, 0.55),
+            rgba(11, 31, 58, 0.55)
+        ),
+        url("../images/YakBackground.png");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* .auth-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: 3rem;
+    max-width: 450px;
+    width: 100%;
+    animation: fadeInUp 0.5s ease;
+} */
+
+/* .auth-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+    padding: 3rem;
+    max-width: 460px;
+    width: 100%;
+    animation: fadeInUp 0.5s ease;
+} */
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.30);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.22);
+
+    padding: 3rem;
+    max-width: 460px;
+    width: 100%;
+
+    animation: fadeInUp 0.5s ease;
+}
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-logo {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+
+/* .auth-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+} */
+
+.auth-subtitle {
+    color: #374151;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.auth-form {
+    margin-top: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: var(--transition);
+    background: white;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-input.error {
+    border-color: var(--danger-color);
+}
+
+.form-error {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.form-errors {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.form-errors ul {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.auth-submit {
+    width: 100%;
+    padding: 1rem;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 1rem;
+}
+
+.auth-submit:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+}
+
+/* .auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--text-secondary);
+} */
+
+.auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: #1f2937;
+    font-weight: 500;
+}
+
+/* .auth-link {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.auth-link:hover {
+    color: #2980b9;
+    text-decoration: underline;
+} */
+
+
+.auth-link {
+    color: #0f4c81;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.auth-link:hover {
+    color: #083358;
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .auth-logo {
+        font-size: 2rem;
+    }
+}

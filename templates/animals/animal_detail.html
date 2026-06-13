@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ animal.animal_id }} - YakSync{% endblock %}
+
+{% block page_title %}Animal Details{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <h2 class="page-title">{{ animal.animal_id }} - {{ animal.name }}</h2>
+        <p class="page-subtitle">{{ animal.species }} • {{ animal.breed }}</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'animals:list' %}" class="btn btn-secondary">← Back to List</a>
+        <a href="{% url 'animals:edit' animal.pk %}" class="btn btn-primary">✏️ Edit</a>
+        <a href="{% url 'animals:delete' animal.pk %}" class="btn btn-danger">🗑️ Delete</a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <!-- Basic Information -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Basic Information</h3>
+        </div>
+        <div class="card-body">
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Animal ID</div>
+                    <div class="detail-value"><strong>{{ animal.animal_id }}</strong></div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Name</div>
+                    <div class="detail-value">{{ animal.name }}</div>
+                </div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Species</div>
+                    <div class="detail-value">{{ animal.species }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Breed</div>
+                    <div class="detail-value">{{ animal.breed }}</div>
+                </div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Age</div>
+                    <div class="detail-value">{{ animal.age }} years</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Gender</div>
+                    <div class="detail-value">
+                        <span class="badge badge-{{ animal.gender }}">{{ animal.get_gender_display }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Weight</div>
+                    <div class="detail-value">{{ animal.weight }} kg</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Registration Date</div>
+                    <div class="detail-value">{{ animal.registration_date|date:"F d, Y" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Health & Reproductive Status -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Health & Reproductive Status</h3>
+        </div>
+        <div class="card-body">
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Health Status</div>
+                    <div class="detail-value">
+                        <span class="badge badge-{{ animal.health_status }} badge-large">
+                            {% if animal.health_status == 'healthy' %}✅{% elif animal.health_status == 'sick' %}❌{% else %}⚕️{% endif %}
+                            {{ animal.get_health_status_display }}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Reproductive Status</div>
+                    <div class="detail-value">
+                        <span class="badge badge-info badge-large">
+                            {{ animal.get_reproductive_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Information -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">System Information</h3>
+    </div>
+    <div class="card-body">
+        <div class="detail-row">
+            <div class="detail-item">
+                <div class="detail-label">Created By</div>
+                <div class="detail-value">
+                    {% if animal.created_by %}
+                        {{ animal.created_by.get_full_name|default:animal.created_by.username }}
+                    {% else %}
+                        System
+                    {% endif %}
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Created At</div>
+                <div class="detail-value">{{ animal.created_at|date:"F d, Y g:i A" }}</div>
+            </div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-item">
+                <div class="detail-label">Last Updated</div>
+                <div class="detail-value">{{ animal.updated_at|date:"F d, Y g:i A" }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Database ID</div>
+                <div class="detail-value">#{{ animal.pk }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.page-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.badge-large {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.badge-male {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.badge-female {
+    background: #fce4ec;
+    color: #c2185b;
+}
+
+.badge-healthy {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.badge-sick {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.badge-under_treatment {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+@media (max-width: 1024px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .page-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .detail-row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

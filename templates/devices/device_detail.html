@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ device.device_id }} - YakSync{% endblock %}
+
+{% block page_title %}Device Details{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <h2 class="page-title">{{ device.device_id }} - {{ device.name }}</h2>
+        <p class="page-subtitle">{{ device.get_device_type_display }} • {{ device.installation_location }}</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'devices:list' %}" class="btn btn-secondary">← Back to List</a>
+        <a href="{% url 'devices:edit' device.pk %}" class="btn btn-primary">✏️ Edit</a>
+        <a href="{% url 'devices:delete' device.pk %}" class="btn btn-danger">🗑️ Delete</a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <!-- Device Information -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Device Information</h3>
+        </div>
+        <div class="card-body">
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Device ID</div>
+                    <div class="detail-value"><strong>{{ device.device_id }}</strong></div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Device Name</div>
+                    <div class="detail-value">{{ device.name }}</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Device Type</div>
+                    <div class="detail-value">
+                        <span class="badge badge-{{ device.device_type }}">{{ device.get_device_type_display }}</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">
+                        <span class="badge badge-{{ device.status }} badge-large">
+                            {% if device.status == 'active' %}✅{% elif device.status == 'inactive' %}⏸️{% else %}🔧{% endif %}
+                            {{ device.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Installation Location</div>
+                    <div class="detail-value">{{ device.installation_location }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Registration Date</div>
+                    <div class="detail-value">{{ device.registration_date|date:"F d, Y" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Operational Status -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Operational Status</h3>
+        </div>
+        <div class="card-body">
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Battery Level</div>
+                    <div class="detail-value">
+                        {% if device.battery_level >= 60 %}
+                            <span class="badge badge-battery-high badge-large">{{ device.battery_level }}%</span>
+                        {% elif device.battery_level >= 30 %}
+                            <span class="badge badge-battery-medium badge-large">{{ device.battery_level }}%</span>
+                        {% else %}
+                            <span class="badge badge-battery-low badge-large">{{ device.battery_level }}%</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Last Communication</div>
+                    <div class="detail-value">
+                        {% if device.last_communication %}
+                            {{ device.last_communication|date:"F d, Y g:i A" }}
+                        {% else %}
+                            <span class="text-muted">No communication recorded</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-label">Assigned Animal</div>
+                    <div class="detail-value">
+                        {% if device.assigned_animal %}
+                            <a href="{% url 'animals:detail' device.assigned_animal.pk %}">
+                                {{ device.assigned_animal.animal_id }} - {{ device.assigned_animal.name }}
+                            </a>
+                        {% else %}
+                            <span class="text-muted">Not assigned</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Information -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">System Information</h3>
+    </div>
+    <div class="card-body">
+        <div class="detail-row">
+            <div class="detail-item">
+                <div class="detail-label">Created At</div>
+                <div class="detail-value">{{ device.created_at|date:"F d, Y g:i A" }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Last Updated</div>
+                <div class="detail-value">{{ device.updated_at|date:"F d, Y g:i A" }}</div>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-item">
+                <div class="detail-label">Database ID</div>
+                <div class="detail-value">#{{ device.pk }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.page-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.text-muted {
+    color: var(--text-secondary);
+}
+
+.badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.badge-large {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.badge-sensor {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.badge-hormone_dispenser {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.badge-active {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.badge-inactive {
+    background: #eceff1;
+    color: #546e7a;
+}
+
+.badge-maintenance {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.badge-battery-high {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.badge-battery-medium {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.badge-battery-low {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+@media (max-width: 1024px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .page-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .detail-row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

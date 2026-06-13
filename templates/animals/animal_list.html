@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Animals - YakSync{% endblock %}
+
+{% block page_title %}Animals{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <h2 class="page-title">Animal Management</h2>
+        <p class="page-subtitle">Manage and monitor your livestock animals</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'animals:create' %}" class="btn btn-primary">
+            ➕ Add New Animal
+        </a>
+    </div>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="card">
+    <div class="card-body" style="padding: 1.5rem;">
+        <form method="get" class="filters-form">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <input type="text" name="search" class="form-input" placeholder="🔍 Search by ID, Name, or Breed" value="{{ search_query }}">
+                </div>
+                
+                <div class="filter-group">
+                    <select name="gender" class="form-input">
+                        <option value="">All Genders</option>
+                        {% for value, label in gender_choices %}
+                            <option value="{{ value }}" {% if selected_gender == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <select name="health_status" class="form-input">
+                        <option value="">All Health Status</option>
+                        {% for value, label in health_status_choices %}
+                            <option value="{{ value }}" {% if selected_health_status == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <select name="reproductive_status" class="form-input">
+                        <option value="">All Reproductive Status</option>
+                        {% for value, label in reproductive_status_choices %}
+                            <option value="{{ value }}" {% if selected_reproductive_status == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{% url 'animals:list' %}" class="btn btn-secondary">Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Animals List -->
+{% if animals %}
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Animal ID</th>
+                        <th>Name</th>
+                        <th>Species</th>
+                        <th>Breed</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Weight</th>
+                        <th>Health Status</th>
+                        <th>Reproductive Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for animal in animals %}
+                    <tr>
+                        <td><strong>{{ animal.animal_id }}</strong></td>
+                        <td>{{ animal.name }}</td>
+                        <td>{{ animal.species }}</td>
+                        <td>{{ animal.breed }}</td>
+                        <td>{{ animal.age }} years</td>
+                        <td>
+                            <span class="badge badge-{{ animal.gender }}">{{ animal.get_gender_display }}</span>
+                        </td>
+                        <td>{{ animal.weight }} kg</td>
+                        <td>
+                            <span class="badge badge-{{ animal.health_status }}">{{ animal.get_health_status_display }}</span>
+                        </td>
+                        <td>
+                            <span class="badge badge-info">{{ animal.get_reproductive_status_display }}</span>
+                        </td>
+                        <td class="actions-cell">
+                            <a href="{% url 'animals:detail' animal.pk %}" class="btn-icon" title="View Details">👁️</a>
+                            <a href="{% url 'animals:edit' animal.pk %}" class="btn-icon" title="Edit">✏️</a>
+                            <a href="{% url 'animals:delete' animal.pk %}" class="btn-icon btn-icon-danger" title="Delete">🗑️</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="pagination-container">
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">« First</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">‹ Previous</a>
+        {% endif %}
+        
+        <span class="pagination-info">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">Next ›</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">Last »</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<div class="card">
+    <div class="card-body">
+        <div class="empty-state">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🐄</div>
+            <h3>No Animals Found</h3>
+            <p>{% if search_query or selected_gender or selected_health_status or selected_reproductive_status %}
+                No animals match your search criteria. Try adjusting your filters.
+            {% else %}
+                Start by adding your first animal to the system.
+            {% endif %}</p>
+            <a href="{% url 'animals:create' %}" class="btn btn-primary" style="margin-top: 1rem;">
+                ➕ Add First Animal
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.filters-form {
+    width: 100%;
+}
+
+.filters-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.form-input {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: var(--bg-color);
+}
+
+.data-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.data-table tbody tr:hover {
+    background: var(--bg-color);
+}
+
+.badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.badge-male {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.badge-female {
+    background: #fce4ec;
+    color: #c2185b;
+}
+
+.badge-healthy {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.badge-sick {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.badge-under_treatment {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    padding: 0.5rem;
+    border-radius: 6px;
+    background: var(--bg-color);
+    transition: var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.btn-icon-danger:hover {
+    background: var(--danger-color);
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.pagination-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.pagination-btn:hover {
+    background: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+}
+
+.pagination-info {
+    padding: 0.5rem 1rem;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 1024px) {
+    .filters-row {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .filter-actions {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .filters-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-actions {
+        grid-column: span 1;
+    }
+}
+</style>
+{% endblock %}

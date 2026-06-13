@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ form_title }} - YakSync{% endblock %}
+{% block page_title %}{{ form_title }}{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h2>{{ form_title }}</h2>
+        <p>Fill in the details below to {{ submit_text|lower }}.</p>
+    </div>
+
+    <form method="post" class="hormone-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors }}</div>{% endif %}
+
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Reservoir Information</h3></div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.hormone_type.id_for_label }}" class="form-label">{{ form.hormone_type.label }} <span class="required">*</span></label>
+                        {{ form.hormone_type }}
+                        {% if form.hormone_type.errors %}<div class="form-error">{{ form.hormone_type.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.unit.id_for_label }}" class="form-label">{{ form.unit.label }} <span class="required">*</span></label>
+                        {{ form.unit }}
+                        {% if form.unit.errors %}<div class="form-error">{{ form.unit.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.initial_quantity.id_for_label }}" class="form-label">{{ form.initial_quantity.label }} <span class="required">*</span></label>
+                        {{ form.initial_quantity }}
+                        {% if form.initial_quantity.errors %}<div class="form-error">{{ form.initial_quantity.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.current_quantity.id_for_label }}" class="form-label">{{ form.current_quantity.label }} <span class="required">*</span></label>
+                        {{ form.current_quantity }}
+                        {% if form.current_quantity.errors %}<div class="form-error">{{ form.current_quantity.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.low_threshold.id_for_label }}" class="form-label">{{ form.low_threshold.label }} <span class="required">*</span></label>
+                        {{ form.low_threshold }}
+                        {% if form.low_threshold.errors %}<div class="form-error">{{ form.low_threshold.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'hormones:reservoir_list' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">{{ submit_text }}</button>
+        </div>
+    </form>
+</div>
+
+<style>
+.form-container { max-width: 900px; margin: 0 auto; }
+.form-header { margin-bottom: 2rem; }
+.form-header h2 { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+.form-header p { color: var(--text-secondary); }
+.hormone-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-label { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; }
+.required, .form-error { color: var(--danger-color); }
+.form-input { padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; transition: var(--transition); font-family: inherit; }
+.form-input:focus { outline: none; border-color: var(--secondary-color); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+.form-error { font-size: 0.85rem; margin-top: 0.25rem; }
+.form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem; }
+@media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } .form-actions { flex-direction: column-reverse; } .form-actions .btn { width: 100%; } }
+</style>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block title %}Register - YakSync{% endblock %}
+
+{% block auth_content %}
+<div class="auth-card">
+    <div class="auth-header">
+        <div class="auth-logo">🐂 YakSync</div>
+        <p class="auth-subtitle">Create Your Account</p>
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="form-errors">
+        {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}" class="form-label">Username *</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="form-error">{{ form.username.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}" class="form-label">Email *</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="form-error">{{ form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+                <div class="form-error">{{ form.first_name.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+                <div class="form-error">{{ form.last_name.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.role.id_for_label }}" class="form-label">Role *</label>
+            {{ form.role }}
+            {% if form.role.errors %}
+                <div class="form-error">{{ form.role.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}" class="form-label">Password *</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <div class="form-error">{{ form.password.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.confirm_password.id_for_label }}" class="form-label">Confirm Password *</label>
+            {{ form.confirm_password }}
+            {% if form.confirm_password.errors %}
+                <div class="form-error">{{ form.confirm_password.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="auth-submit">Register</button>
+    </form>
+
+    <div class="auth-footer">
+        Already have an account? <a href="{% url 'authentication:login' %}" class="auth-link">Login here</a>
+    </div>
+</div>
+{% endblock %}

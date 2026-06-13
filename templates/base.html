@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="YakSync - Smart IoT Platform for Livestock Reproductive Management">
+    <title>{% block title %}YakSync{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if user.is_authenticated %}
+        <div class="layout">
+            <aside class="sidebar">
+                {% include 'includes/sidebar.html' %}
+            </aside>
+            <div class="main-content">
+                <nav class="navbar">
+                    {% include 'includes/navbar.html' %}
+                </nav>
+                <main class="content">
+                    {% include 'includes/messages.html' %}
+                    {% block content %}{% endblock %}
+                </main>
+            </div>
+        </div>
+    {% else %}
+        <main class="auth-layout">
+            {% include 'includes/messages.html' %}
+            {% block auth_content %}{% endblock %}
+        </main>
+    {% endif %}
+    
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

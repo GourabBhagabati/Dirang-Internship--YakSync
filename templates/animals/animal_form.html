@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ form_title }} - YakSync{% endblock %}
+
+{% block page_title %}{{ form_title }}{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h2>{{ form_title }}</h2>
+        <p>Fill in the details below to {{ submit_text|lower }}</p>
+    </div>
+    
+    <form method="post" class="animal-form">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+        <div class="alert alert-error">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Basic Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.animal_id.id_for_label }}" class="form-label">
+                            {{ form.animal_id.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.animal_id }}
+                        {% if form.animal_id.errors %}
+                            <div class="form-error">{{ form.animal_id.errors.0 }}</div>
+                        {% endif %}
+                        <div class="form-help">Unique identifier for this animal</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">
+                            {{ form.name.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="form-error">{{ form.name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.species.id_for_label }}" class="form-label">
+                            {{ form.species.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.species }}
+                        {% if form.species.errors %}
+                            <div class="form-error">{{ form.species.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.breed.id_for_label }}" class="form-label">
+                            {{ form.breed.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.breed }}
+                        {% if form.breed.errors %}
+                            <div class="form-error">{{ form.breed.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.age.id_for_label }}" class="form-label">
+                            {{ form.age.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.age }}
+                        {% if form.age.errors %}
+                            <div class="form-error">{{ form.age.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.gender.id_for_label }}" class="form-label">
+                            {{ form.gender.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.gender }}
+                        {% if form.gender.errors %}
+                            <div class="form-error">{{ form.gender.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.weight.id_for_label }}" class="form-label">
+                            {{ form.weight.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.weight }}
+                        {% if form.weight.errors %}
+                            <div class="form-error">{{ form.weight.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Health & Reproductive Status</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.health_status.id_for_label }}" class="form-label">
+                            {{ form.health_status.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.health_status }}
+                        {% if form.health_status.errors %}
+                            <div class="form-error">{{ form.health_status.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.reproductive_status.id_for_label }}" class="form-label">
+                            {{ form.reproductive_status.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.reproductive_status }}
+                        {% if form.reproductive_status.errors %}
+                            <div class="form-error">{{ form.reproductive_status.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <a href="{% url 'animals:list' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">{{ submit_text }}</button>
+        </div>
+    </form>
+</div>
+
+<style>
+.form-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-header {
+    margin-bottom: 2rem;
+}
+
+.form-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: var(--text-secondary);
+}
+
+.animal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.required {
+    color: var(--danger-color);
+}
+
+.form-input {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-error {
+    color: var(--danger-color);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.form-help {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

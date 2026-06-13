@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Protocol - YakSync{% endblock %}
+
+{% block page_title %}Delete Protocol{% endblock %}
+
+{% block content %}
+<div class="delete-container">
+    <div class="card delete-card">
+        <div class="card-body">
+            <div class="delete-icon">⚠️</div>
+            
+            <h2 class="delete-title">Confirm Deletion</h2>
+            
+            <p class="delete-message">
+                Are you sure you want to delete this treatment protocol? This will also delete all associated protocol steps. This action cannot be undone.
+            </p>
+            
+            <div class="protocol-info">
+                <div class="info-row">
+                    <span class="info-label">Protocol Name:</span>
+                    <span class="info-value"><strong>{{ protocol.name }}</strong></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Duration:</span>
+                    <span class="info-value">{{ protocol.duration_days }} days</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Steps:</span>
+                    <span class="info-value">{{ protocol.steps.count }} step{{ protocol.steps.count|pluralize }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Description:</span>
+                    <span class="info-value">{{ protocol.description|truncatewords:30 }}</span>
+                </div>
+            </div>
+            
+            <form method="post" class="delete-form">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <a href="{% url 'protocols:detail' protocol.pk %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-danger">Yes, Delete Protocol</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.delete-container {
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.delete-card {
+    text-align: center;
+}
+
+.delete-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.delete-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.delete-message {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.protocol-info {
+    background: var(--bg-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+    gap: 1rem;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.info-value {
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.delete-form {
+    margin-top: 2rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

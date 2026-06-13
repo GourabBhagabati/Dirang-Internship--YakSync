@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ form_title }} - YakSync{% endblock %}
+
+{% block page_title %}{{ form_title }}{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h2>{{ form_title }}</h2>
+        <p>Fill in the details below to {{ submit_text|lower }}</p>
+    </div>
+
+    <form method="post" class="device-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-error">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Device Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.device_id.id_for_label }}" class="form-label">
+                            {{ form.device_id.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.device_id }}
+                        {% if form.device_id.errors %}
+                            <div class="form-error">{{ form.device_id.errors.0 }}</div>
+                        {% endif %}
+                        <div class="form-help">Unique identifier for this device</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">
+                            {{ form.name.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="form-error">{{ form.name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.device_type.id_for_label }}" class="form-label">
+                            {{ form.device_type.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.device_type }}
+                        {% if form.device_type.errors %}
+                            <div class="form-error">{{ form.device_type.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.installation_location.id_for_label }}" class="form-label">
+                            {{ form.installation_location.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.installation_location }}
+                        {% if form.installation_location.errors %}
+                            <div class="form-error">{{ form.installation_location.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Status & Assignment</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.status.id_for_label }}" class="form-label">
+                            {{ form.status.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.status }}
+                        {% if form.status.errors %}
+                            <div class="form-error">{{ form.status.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.battery_level.id_for_label }}" class="form-label">
+                            {{ form.battery_level.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.battery_level }}
+                        {% if form.battery_level.errors %}
+                            <div class="form-error">{{ form.battery_level.errors.0 }}</div>
+                        {% endif %}
+                        <div class="form-help">Value between 0 and 100</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.assigned_animal.id_for_label }}" class="form-label">
+                            {{ form.assigned_animal.label }}
+                        </label>
+                        {{ form.assigned_animal }}
+                        {% if form.assigned_animal.errors %}
+                            <div class="form-error">{{ form.assigned_animal.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.last_communication.id_for_label }}" class="form-label">
+                            {{ form.last_communication.label }}
+                        </label>
+                        {{ form.last_communication }}
+                        {% if form.last_communication.errors %}
+                            <div class="form-error">{{ form.last_communication.errors.0 }}</div>
+                        {% endif %}
+                        <div class="form-help">Optional — last time the device communicated with the system</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'devices:list' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">{{ submit_text }}</button>
+        </div>
+    </form>
+</div>
+
+<style>
+.form-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-header {
+    margin-bottom: 2rem;
+}
+
+.form-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: var(--text-secondary);
+}
+
+.device-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.required {
+    color: var(--danger-color);
+}
+
+.form-input {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-error {
+    color: var(--danger-color);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.form-help {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
