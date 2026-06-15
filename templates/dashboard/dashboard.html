@@ -27,7 +27,7 @@
 
             <div class="stat-card">
                 <div class="stat-icon animal-icon">
-                    🐄
+                    <i class="fa-solid fa-cow"></i>
                 </div>
 
                 <div class="stat-content">
@@ -41,7 +41,7 @@
 
             <div class="stat-card">
                 <div class="stat-icon device-icon">
-                    📡
+                    <i class="fa-solid fa-microchip"></i>
                 </div>
 
                 <div class="stat-content">
@@ -58,7 +58,7 @@
 
             <div class="stat-card">
                 <div class="stat-icon protocol-icon">
-                    📋
+                    <i class="fa-solid fa-clipboard-check"></i>
                 </div>
 
                 <div class="stat-content">
@@ -75,7 +75,7 @@
 
             <div class="stat-card">
                 <div class="stat-icon alert-icon">
-                    🚨
+                    <i class="fa-solid fa-bell"></i>
                 </div>
 
                 <div class="stat-content">
@@ -121,11 +121,11 @@
                         <div class="alert-icon">
 
                             {% if alert.severity == 'critical' %}
-                            ⚠️
+                            <i class="fa-solid fa-circle-exclamation"></i>
                             {% elif alert.severity == 'warning' %}
-                            ⚡
+                            <i class="fa-solid fa-triangle-exclamation"></i>
                             {% else %}
-                            ℹ️
+                            <i class="fa-solid fa-circle-info"></i>
                             {% endif %}
 
                         </div>
@@ -163,7 +163,7 @@
 
                 <div class="empty-state">
                     <p>
-                        ✅ No active alerts. System running smoothly!
+                        <i class="fa-solid fa-circle-check" style="color: #27ae60; margin-right: 0.5rem;"></i> No active alerts. System running smoothly!
                     </p>
                 </div>
 
@@ -287,18 +287,18 @@
 
             <div class="activity-item">
 
-                <div class="activity-icon">
+                <div class="activity-icon" style="display: flex; align-items: center; justify-content: center;">
 
                     {% if log.action_type == 'create' %}
-                    ➕
+                    <i class="fa-solid fa-plus" style="font-size: 0.875rem;"></i>
                     {% elif log.action_type == 'update' %}
-                    ✏️
+                    <i class="fa-solid fa-pen" style="font-size: 0.875rem;"></i>
                     {% elif log.action_type == 'delete' %}
-                    🗑️
+                    <i class="fa-solid fa-trash" style="font-size: 0.875rem;"></i>
                     {% elif log.action_type == 'login' %}
-                    🔓
+                    <i class="fa-solid fa-unlock" style="font-size: 0.875rem;"></i>
                     {% else %}
-                    📝
+                    <i class="fa-solid fa-file-lines" style="font-size: 0.875rem;"></i>
                     {% endif %}
 
                 </div>

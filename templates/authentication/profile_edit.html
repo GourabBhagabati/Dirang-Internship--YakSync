@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - YakSync{% endblock %}
+
+{% block page_title %}Edit Profile{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-card">
+        <form method="post" enctype="multipart/form-data" id="profileEditForm">
+            {% csrf_token %}
+            
+            <div class="profile-header">
+                <div class="profile-avatar-large" id="avatarPreview">
+                    {% if profile.profile_image %}
+                        <img src="{{ profile.profile_image.url }}" id="imagePreview" alt="Profile Picture">
+                    {% else %}
+                        <span id="charPreview">{{ user.username|slice:":1"|upper }}</span>
+                        <img src="" id="imagePreview" style="display: none;" alt="Profile Picture">
+                    {% endif %}
+                </div>
+                
+                <div class="profile-avatar-upload">
+                    <button type="button" class="btn-upload-trigger" id="uploadBtn">
+                        <i class="fa-solid fa-camera"></i> Change Profile Photo
+                    </button>
+                    <div style="display: none;">
+                        {{ profile_form.profile_image }}
+                    </div>
+                    {% if profile_form.profile_image.errors %}
+                        <div class="form-error-msg">{{ profile_form.profile_image.errors.0 }}</div>
+                    {% endif %}
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                        Accepted formats: JPG, JPEG, PNG
+                    </p>
+                </div>
+            </div>
+
+            <div class="profile-body">
+                <div class="profile-form-grid">
+                    <!-- First Name -->
+                    <div class="profile-form-group">
+                        <label for="{{ user_form.first_name.id_for_label }}" class="profile-label">First Name</label>
+                        <div class="profile-input-wrapper">
+                            <i class="fa-solid fa-address-card"></i>
+                            {{ user_form.first_name }}
+                        </div>
+                        {% if user_form.first_name.errors %}
+                            <div class="form-error-msg">{{ user_form.first_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="profile-form-group">
+                        <label for="{{ user_form.last_name.id_for_label }}" class="profile-label">Last Name</label>
+                        <div class="profile-input-wrapper">
+                            <i class="fa-solid fa-address-card"></i>
+                            {{ user_form.last_name }}
+                        </div>
+                        {% if user_form.last_name.errors %}
+                            <div class="form-error-msg">{{ user_form.last_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Username (Read-only representation) -->
+                    <div class="profile-form-group">
+                        <label class="profile-label">Username</label>
+                        <div class="profile-input-wrapper">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" class="form-input" value="{{ user.username }}" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Email Address -->
+                    <div class="profile-form-group">
+                        <label for="{{ user_form.email.id_for_label }}" class="profile-label">Email Address *</label>
+                        <div class="profile-input-wrapper">
+                            <i class="fa-solid fa-envelope"></i>
+                            {{ user_form.email }}
+                        </div>
+                        {% if user_form.email.errors %}
+                            <div class="form-error-msg">{{ user_form.email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="profile-form-group">
+                        <label for="{{ profile_form.phone_number.id_for_label }}" class="profile-label">Phone Number</label>
+                        <div class="profile-input-wrapper">
+                            <i class="fa-solid fa-phone"></i>
+                            {{ profile_form.phone_number }}
+                        </div>
+                        {% if profile_form.phone_number.errors %}
+                            <div class="form-error-msg">{{ profile_form.phone_number.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- User Role (Read-only display) -->
+                    <div class="profile-form-group">
+                        <label class="profile-label">User Role</label>
+                        <div class="profile-input-wrapper">
+                            <i class="fa-solid fa-briefcase"></i>
+                            <input type="text" class="form-input" value="{% if profile %}{{ profile.get_role_display }}{% elif user.is_superuser %}Administrator{% endif %}" disabled>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-form-actions">
+                    <a href="{% url 'dashboard:index' %}" class="profile-btn profile-btn-secondary">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </a>
+                    <button type="submit" class="profile-btn profile-btn-primary">
+                        <i class="fa-solid fa-check"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('profileImageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const charPreview = document.getElementById('charPreview');
+
+    if (uploadBtn && fileInput) {
+        uploadBtn.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                // Check format client-side
+                const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+                if (!allowedExtensions.exec(file.name)) {
+                    alert('Please upload an image file in JPG, JPEG, or PNG format.');
+                    this.value = '';
+                    return false;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (imagePreview) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    }
+                    if (charPreview) {
+                        charPreview.style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

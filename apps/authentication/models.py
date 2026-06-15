@@ -6,15 +6,15 @@ class UserProfile(models.Model):
     """Extended user profile for YakSync users"""
     
     ROLE_CHOICES = [
-        ('veterinarian', 'Veterinarian'),
         ('farm_operator', 'Farm Operator'),
-        ('researcher', 'Researcher'),
+        ('veterinarian', 'Veterinarian'),
+        ('administrator', 'Administrator'),
     ]
     
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     role = models.CharField(max_length=50, choices=ROLE_CHOICES)
-    phone = models.CharField(max_length=20, blank=True)
-    organization = models.CharField(max_length=200, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -24,4 +24,4 @@ class UserProfile(models.Model):
         verbose_name_plural = 'User Profiles'
     
     def __str__(self):
-        return f"{self.user.username} - {self.get_role_display()}"
+        return self.user.get_full_name() or self.user.username

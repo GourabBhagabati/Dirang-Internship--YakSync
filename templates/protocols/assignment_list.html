@@ -13,7 +13,7 @@
     </div>
     <div class="page-actions">
         <a href="{% url 'protocols:assignment_create' %}" class="btn btn-primary">
-            ➕ Create Assignment
+            <i class="fa-solid fa-plus"></i> Create Assignment
         </a>
     </div>
 </div>
@@ -118,8 +118,8 @@
                         </td>
                         <td>{{ assignment.assigned_by.get_full_name|default:assignment.assigned_by.username|default:"System" }}</td>
                         <td class="actions-cell">
-                            <a href="{% url 'protocols:assignment_detail' assignment.pk %}" class="btn-icon" title="View">👁️</a>
-                            <a href="{% url 'protocols:assignment_edit' assignment.pk %}" class="btn-icon" title="Edit">✏️</a>
+                            <a href="{% url 'protocols:assignment_detail' assignment.pk %}" class="btn-icon" title="View" style="display: inline-flex; align-items: center; justify-content: center;"><i class="fa-solid fa-eye" style="font-size: 0.875rem;"></i></a>
+                            <a href="{% url 'protocols:assignment_edit' assignment.pk %}" class="btn-icon" title="Edit" style="display: inline-flex; align-items: center; justify-content: center;"><i class="fa-solid fa-pen" style="font-size: 0.875rem;"></i></a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -154,7 +154,7 @@
 <div class="card">
     <div class="card-body">
         <div class="empty-state">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
+            <div style="font-size: 4rem; margin-bottom: 1rem; color: var(--text-secondary);"><i class="fa-solid fa-clipboard-list"></i></div>
             <h3>No Treatment Assignments Found</h3>
             <p>{% if selected_animal or selected_protocol or selected_status or selected_start_date or selected_end_date %}
                 No assignments match your filter criteria.
@@ -162,7 +162,7 @@
                 Start by creating the first treatment assignment.
             {% endif %}</p>
             <a href="{% url 'protocols:assignment_create' %}" class="btn btn-primary" style="margin-top: 1rem;">
-                ➕ Create First Assignment
+                <i class="fa-solid fa-plus"></i> Create First Assignment
             </a>
         </div>
     </div>

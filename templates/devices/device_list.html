@@ -13,7 +13,7 @@
     </div>
     <div class="page-actions">
         <a href="{% url 'devices:create' %}" class="btn btn-primary">
-            ➕ Add New Device
+            <i class="fa-solid fa-plus"></i> Add New Device
         </a>
     </div>
 </div>
@@ -23,8 +23,9 @@
     <div class="card-body" style="padding: 1.5rem;">
         <form method="get" class="filters-form">
             <div class="filters-row">
-                <div class="filter-group">
-                    <input type="text" name="search" class="form-input" placeholder="🔍 Search by ID, Name, or Location" value="{{ search_query }}">
+                <div class="filter-group filter-search-wrapper" style="position: relative;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
+                    <input type="text" name="search" class="form-input" placeholder="Search by ID, Name, or Location" value="{{ search_query }}" style="padding-left: 35px;">
                 </div>
 
                 <div class="filter-group">
@@ -109,9 +110,9 @@
                             {% endif %}
                         </td>
                         <td class="actions-cell">
-                            <a href="{% url 'devices:detail' device.pk %}" class="btn-icon" title="View Details">👁️</a>
-                            <a href="{% url 'devices:edit' device.pk %}" class="btn-icon" title="Edit">✏️</a>
-                            <a href="{% url 'devices:delete' device.pk %}" class="btn-icon btn-icon-danger" title="Delete">🗑️</a>
+                            <a href="{% url 'devices:detail' device.pk %}" class="btn-icon" title="View Details" style="display: inline-flex; align-items: center; justify-content: center;"><i class="fa-solid fa-eye" style="font-size: 0.875rem;"></i></a>
+                            <a href="{% url 'devices:edit' device.pk %}" class="btn-icon" title="Edit" style="display: inline-flex; align-items: center; justify-content: center;"><i class="fa-solid fa-pen" style="font-size: 0.875rem;"></i></a>
+                            <a href="{% url 'devices:delete' device.pk %}" class="btn-icon btn-icon-danger" title="Delete" style="display: inline-flex; align-items: center; justify-content: center;"><i class="fa-solid fa-trash" style="font-size: 0.875rem;"></i></a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -146,7 +147,7 @@
 <div class="card">
     <div class="card-body">
         <div class="empty-state">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">📡</div>
+            <div style="font-size: 4rem; margin-bottom: 1rem; color: var(--text-secondary);"><i class="fa-solid fa-microchip"></i></div>
             <h3>No Devices Found</h3>
             <p>{% if search_query or selected_device_type or selected_status %}
                 No devices match your search criteria. Try adjusting your filters.
@@ -154,7 +155,7 @@
                 Start by adding your first device to the system.
             {% endif %}</p>
             <a href="{% url 'devices:create' %}" class="btn btn-primary" style="margin-top: 1rem;">
-                ➕ Add First Device
+                <i class="fa-solid fa-plus"></i> Add First Device
             </a>
         </div>
     </div>

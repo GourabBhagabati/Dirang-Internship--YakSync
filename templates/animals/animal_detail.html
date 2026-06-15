@@ -12,9 +12,9 @@
         <p class="page-subtitle">{{ animal.species }} • {{ animal.breed }}</p>
     </div>
     <div class="page-actions">
-        <a href="{% url 'animals:list' %}" class="btn btn-secondary">← Back to List</a>
-        <a href="{% url 'animals:edit' animal.pk %}" class="btn btn-primary">✏️ Edit</a>
-        <a href="{% url 'animals:delete' animal.pk %}" class="btn btn-danger">🗑️ Delete</a>
+        <a href="{% url 'animals:list' %}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to List</a>
+        <a href="{% url 'animals:edit' animal.pk %}" class="btn btn-primary"><i class="fa-solid fa-pen"></i> Edit</a>
+        <a href="{% url 'animals:delete' animal.pk %}" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Delete</a>
     </div>
 </div>
 
@@ -84,7 +84,7 @@
                     <div class="detail-label">Health Status</div>
                     <div class="detail-value">
                         <span class="badge badge-{{ animal.health_status }} badge-large">
-                            {% if animal.health_status == 'healthy' %}✅{% elif animal.health_status == 'sick' %}❌{% else %}⚕️{% endif %}
+                            {% if animal.health_status == 'healthy' %}<i class="fa-solid fa-circle-check"></i>{% elif animal.health_status == 'sick' %}<i class="fa-solid fa-circle-xmark"></i>{% else %}<i class="fa-solid fa-briefcase-medical"></i>{% endif %}
                             {{ animal.get_health_status_display }}
                         </span>
                     </div>

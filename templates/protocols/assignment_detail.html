@@ -12,8 +12,8 @@
         <p class="page-subtitle">{{ assignment.animal.animal_id }} - {{ assignment.protocol.name }}</p>
     </div>
     <div class="page-actions">
-        <a href="{% url 'protocols:assignment_list' %}" class="btn btn-secondary">← Back to List</a>
-        <a href="{% url 'protocols:assignment_edit' assignment.pk %}" class="btn btn-primary">✏️ Edit</a>
+        <a href="{% url 'protocols:assignment_list' %}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to List</a>
+        <a href="{% url 'protocols:assignment_edit' assignment.pk %}" class="btn btn-primary"><i class="fa-solid fa-pen"></i> Edit</a>
     </div>
 </div>
 

@@ -76,4 +76,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Profile Dropdown Toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const trigger = document.getElementById('userProfileTrigger');
+    const dropdown = document.getElementById('profileDropdown');
+    
+    if (trigger && dropdown) {
+        trigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            trigger.classList.toggle('active');
+            dropdown.classList.toggle('active');
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target) && !trigger.contains(e.target)) {
+                trigger.classList.remove('active');
+                dropdown.classList.remove('active');
+            }
+        });
+    }
+});
+
 console.log('YakSync IoT Platform Loaded Successfully');

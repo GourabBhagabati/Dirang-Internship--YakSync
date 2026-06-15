@@ -12,9 +12,9 @@
         <p class="page-subtitle">{{ device.get_device_type_display }} • {{ device.installation_location }}</p>
     </div>
     <div class="page-actions">
-        <a href="{% url 'devices:list' %}" class="btn btn-secondary">← Back to List</a>
-        <a href="{% url 'devices:edit' device.pk %}" class="btn btn-primary">✏️ Edit</a>
-        <a href="{% url 'devices:delete' device.pk %}" class="btn btn-danger">🗑️ Delete</a>
+        <a href="{% url 'devices:list' %}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to List</a>
+        <a href="{% url 'devices:edit' device.pk %}" class="btn btn-primary"><i class="fa-solid fa-pen"></i> Edit</a>
+        <a href="{% url 'devices:delete' device.pk %}" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Delete</a>
     </div>
 </div>
 
@@ -47,7 +47,7 @@
                     <div class="detail-label">Status</div>
                     <div class="detail-value">
                         <span class="badge badge-{{ device.status }} badge-large">
-                            {% if device.status == 'active' %}✅{% elif device.status == 'inactive' %}⏸️{% else %}🔧{% endif %}
+                            {% if device.status == 'active' %}<i class="fa-solid fa-signal" style="margin-right: 0.25rem;"></i>{% elif device.status == 'inactive' %}<i class="fa-solid fa-pause" style="margin-right: 0.25rem;"></i>{% else %}<i class="fa-solid fa-plug-circle-xmark" style="margin-right: 0.25rem;"></i>{% endif %}
                             {{ device.get_status_display }}
                         </span>
                     </div>

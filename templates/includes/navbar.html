@@ -5,18 +5,81 @@
 </div>
 
 <div class="navbar-right">
-    <div class="user-info">
-        <div class="user-avatar">
-            {{ user.username|slice:":1"|upper }}
+    <div class="user-info-wrapper">
+        <div class="user-info" id="userProfileTrigger">
+            <div class="user-avatar">
+                {% if user.profile and user.profile.profile_image %}
+                    <img src="{{ user.profile.profile_image.url }}" alt="{{ user.get_full_name|default:user.username }}">
+                {% else %}
+                    {{ user.username|slice:":1"|upper }}
+                {% endif %}
+            </div>
+            <div class="user-details">
+                <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                    {% if user.profile %}
+                        {{ user.profile.get_role_display }}
+                    {% elif user.is_superuser %}
+                        Administrator
+                    {% endif %}
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
         </div>
-        <div class="user-details">
-            <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
-            <div style="font-size: 0.75rem; color: var(--text-secondary);">
-                {% if user.profile %}{{ user.profile.get_role_display }}{% endif %}
+        
+        <!-- Profile Dropdown Card -->
+        <div class="profile-dropdown" id="profileDropdown">
+            <div class="dropdown-header">
+                <div class="dropdown-avatar">
+                    {% if user.profile and user.profile.profile_image %}
+                        <img src="{{ user.profile.profile_image.url }}" alt="{{ user.get_full_name|default:user.username }}">
+                    {% else %}
+                        {{ user.username|slice:":1"|upper }}
+                    {% endif %}
+                </div>
+                <h4 class="dropdown-name">{{ user.get_full_name|default:user.username }}</h4>
+                <p class="dropdown-role">
+                    {% if user.profile %}
+                        {{ user.profile.get_role_display }}
+                    {% elif user.is_superuser %}
+                        Administrator
+                    {% endif %}
+                </p>
+            </div>
+            
+            <div class="dropdown-body">
+                <div class="info-item">
+                    <span class="info-label"><i class="fa-solid fa-user"></i> Username:</span>
+                    <span class="info-value">{{ user.username }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label"><i class="fa-solid fa-envelope"></i> Email:</span>
+                    <span class="info-value">{{ user.email|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label"><i class="fa-solid fa-phone"></i> Phone:</span>
+                    <span class="info-value">
+                        {% if user.profile and user.profile.phone_number %}
+                            {{ user.profile.phone_number }}
+                        {% else %}
+                            Not provided
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label"><i class="fa-solid fa-calendar-days"></i> Joined:</span>
+                    <span class="info-value">{{ user.date_joined|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            
+            <div class="dropdown-footer">
+                <a href="{% url 'authentication:profile_edit' %}" class="btn-edit-profile">
+                    <i class="fa-solid fa-user-gear"></i> Edit Profile
+                </a>
+                <a href="{% url 'authentication:logout' %}" class="btn-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
             </div>
         </div>
     </div>
-    <a href="{% url 'authentication:logout' %}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">
-        Logout
-    </a>
 </div>

@@ -94,3 +94,58 @@ class RegisterForm(forms.ModelForm):
                 role=self.cleaned_data['role']
             )
         return user
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'First Name',
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Last Name',
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Email Address',
+                'required': True,
+            }),
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError('Email already registered by another user.')
+        return email
+
+
+class UserProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['phone_number', 'profile_image']
+        widgets = {
+            'phone_number': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Phone Number',
+            }),
+            'profile_image': forms.FileInput(attrs={
+                'class': 'file-input',
+                'accept': 'image/*',
+                'style': 'display: none;',
+                'id': 'profileImageInput',
+            }),
+        }
+
+    def clean_profile_image(self):
+        image = self.cleaned_data.get('profile_image')
+        if image:
+            import os
+            ext = os.path.splitext(image.name)[1].lower()
+            valid_extensions = ['.jpg', '.jpeg', '.png']
+            if ext not in valid_extensions:
+                raise forms.ValidationError('Unsupported file extension. Only JPG, JPEG, and PNG are allowed.')
+        return image

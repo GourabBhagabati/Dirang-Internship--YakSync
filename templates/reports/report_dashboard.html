@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reports Center - YakSync{% endblock %}
+
+{% block page_title %}Reports Center{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reports.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="reports-container">
+    <div class="reports-header">
+        <div class="reports-title">
+            <h2>Livestock Reports Center</h2>
+            <p>Generate and download detailed analytical reports for livestock health, IoT monitoring, and reproductive management.</p>
+        </div>
+    </div>
+
+    <!-- Summary metrics counters -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-info">
+                <span class="metric-value">{{ total_animals }}</span>
+                <span class="metric-label">Total Animals</span>
+            </div>
+            <div class="metric-icon">
+                <i class="fa-solid fa-cow"></i>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-info">
+                <span class="metric-value">{{ active_devices }}</span>
+                <span class="metric-label">Active IoT Devices</span>
+            </div>
+            <div class="metric-icon">
+                <i class="fa-solid fa-microchip"></i>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-info">
+                <span class="metric-value">{{ total_alerts }}</span>
+                <span class="metric-label">Total Alerts</span>
+            </div>
+            <div class="metric-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-info">
+                <span class="metric-value">{{ total_protocols }}</span>
+                <span class="metric-label">Treatment Protocols</span>
+            </div>
+            <div class="metric-icon">
+                <i class="fa-solid fa-clipboard-check"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filter-card">
+        <div class="filter-title">
+            <i class="fa-solid fa-filter"></i> Report Filters
+        </div>
+        <form method="get" action="{% url 'reports:dashboard' %}" class="filter-form">
+            <div class="filter-grid">
+                <!-- Report Type -->
+                <div class="filter-group">
+                    <label for="reportTypeInput" class="filter-label">Report Type</label>
+                    <select name="report_type" id="reportTypeInput" class="filter-input" required>
+                        <option value="">-- Select Report --</option>
+                        <option value="animal_health" {% if selected_report_type == 'animal_health' %}selected{% endif %}>Animal Health Report</option>
+                        <option value="iot_monitoring" {% if selected_report_type == 'iot_monitoring' %}selected{% endif %}>IoT Monitoring Report</option>
+                        <option value="alert_history" {% if selected_report_type == 'alert_history' %}selected{% endif %}>Alert History Report</option>
+                        <option value="treatment_hormone" {% if selected_report_type == 'treatment_hormone' %}selected{% endif %}>Treatment & Hormone Report</option>
+                    </select>
+                </div>
+
+                <!-- Date From -->
+                <div class="filter-group">
+                    <label for="startDateInput" class="filter-label">Date From</label>
+                    <input type="date" name="start_date" id="startDateInput" class="filter-input" value="{{ selected_start_date|default:'' }}">
+                </div>
+
+                <!-- Date To -->
+                <div class="filter-group">
+                    <label for="endDateInput" class="filter-label">Date To</label>
+                    <input type="date" name="end_date" id="endDateInput" class="filter-input" value="{{ selected_end_date|default:'' }}">
+                </div>
+
+                <!-- Animal -->
+                <div class="filter-group">
+                    <label for="animalSelectInput" class="filter-label">Animal Selection</label>
+                    <select name="animal" id="animalSelectInput" class="filter-input">
+                        <option value="">All Animals</option>
+                        {% for animal in animals_list %}
+                            <option value="{{ animal.id }}" {% if selected_animal == animal.id|stringformat:"i" %}selected{% endif %}>{{ animal.animal_id }} - {{ animal.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Filter Actions -->
+                <div class="filter-actions">
+                    <a href="{% url 'reports:dashboard' %}" class="btn-filter btn-filter-secondary">Clear</a>
+                    <button type="submit" class="btn-filter btn-filter-primary">Generate</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Active Report Preview Grid (displayed if selected, otherwise display cards) -->
+    {% if report_data %}
+        <div class="preview-card">
+            <div class="preview-header">
+                <div class="preview-header-info">
+                    <h3>{{ report_data.title }} Preview</h3>
+                    <p>Showing records matching current filters. Click Download PDF for a complete detailed copy.</p>
+                </div>
+                <a href="{% url 'reports:pdf_export' %}?report_type={{ selected_report_type }}&start_date={{ selected_start_date|default:'' }}&end_date={{ selected_end_date|default:'' }}&animal={{ selected_animal|default:'' }}" class="btn-download-pdf">
+                    <i class="fa-solid fa-file-pdf"></i> Download PDF
+                </a>
+            </div>
+            
+            <div class="preview-body">
+                {% if report_data.rows %}
+                    <table class="reports-table">
+                        <thead>
+                            <tr>
+                                {% for header in report_data.headers %}
+                                    <th>{{ header }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if report_data.report_type == 'animal_health' %}
+                                {% for row in report_data.rows %}
+                                    <tr>
+                                        <td><strong>{{ row.animal_id }}</strong></td>
+                                        <td>{{ row.name }}</td>
+                                        <td>{{ row.breed }}</td>
+                                        <td>{{ row.age }}</td>
+                                        <td>{{ row.weight }} kg</td>
+                                        <td>
+                                            <span class="badge badge-{{ row.health_status|lower|slugify }}">
+                                                {{ row.health_status }}
+                                            </span>
+                                        </td>
+                                        <td>{{ row.reproductive_status }}</td>
+                                        <td>{{ row.devices }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% elif report_data.report_type == 'iot_monitoring' %}
+                                {% for row in report_data.rows %}
+                                    <tr>
+                                        <td>{{ row.timestamp }}</td>
+                                        <td><strong>{{ row.animal_id }}</strong></td>
+                                        <td>{{ row.device }}</td>
+                                        <td>{{ row.sensor_type }}</td>
+                                        <td>{{ row.value }}</td>
+                                        <td>{{ row.unit }}</td>
+                                        <td>
+                                            <span class="badge badge-{{ row.is_abnormal|lower }}">
+                                                {{ row.is_abnormal }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% elif report_data.report_type == 'alert_history' %}
+                                {% for row in report_data.rows %}
+                                    <tr>
+                                        <td>{{ row.timestamp }}</td>
+                                        <td>{{ row.title }}</td>
+                                        <td>
+                                            <span class="badge badge-{{ row.severity|lower }}">
+                                                {{ row.severity }}
+                                            </span>
+                                        </td>
+                                        <td><strong>{{ row.animal_id }}</strong></td>
+                                        <td>{{ row.device }}</td>
+                                        <td>
+                                            <span class="badge badge-{{ row.status|lower }}">
+                                                {{ row.status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% elif report_data.report_type == 'treatment_hormone' %}
+                                {% for row in report_data.rows %}
+                                    <tr>
+                                        <td>{{ row.start_date }}</td>
+                                        <td><strong>{{ row.animal_id }}</strong></td>
+                                        <td>{{ row.protocol }}</td>
+                                        <td>{{ row.progress }}</td>
+                                        <td>{{ row.assigned_by }}</td>
+                                        <td>
+                                            <span class="badge badge-{{ row.status|lower|slugify }}">
+                                                {{ row.status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="empty-preview">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <p>No matching records found for the selected parameters.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <!-- Report generation category cards -->
+        <div class="report-types-grid">
+            <!-- Animal Health Card -->
+            <div class="report-type-card">
+                <div class="report-type-header">
+                    <div class="report-type-icon">
+                        <i class="fa-solid fa-file-medical"></i>
+                    </div>
+                    <h3 class="report-type-title">Animal Health</h3>
+                </div>
+                <p class="report-type-desc">
+                    Generates records of all registered animals, including breeds, weights, current health statuses, and assigned IoT sensors.
+                </p>
+                <a href="{% url 'reports:dashboard' %}?report_type=animal_health" class="btn-generate">
+                    <i class="fa-solid fa-file-invoice"></i> Generate Report
+                </a>
+            </div>
+
+            <!-- IoT Monitoring Card -->
+            <div class="report-type-card">
+                <div class="report-type-header">
+                    <div class="report-type-icon">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3 class="report-type-title">IoT Sensor Readings</h3>
+                </div>
+                <p class="report-type-desc">
+                    Analyzes temperature readings, movement steps, abnormal activities, and historical communication logs from active IoT sensors.
+                </p>
+                <a href="{% url 'reports:dashboard' %}?report_type=iot_monitoring" class="btn-generate">
+                    <i class="fa-solid fa-file-invoice"></i> Generate Report
+                </a>
+            </div>
+
+            <!-- Alert History Card -->
+            <div class="report-type-card">
+                <div class="report-type-header">
+                    <div class="report-type-icon">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <h3 class="report-type-title">Alert History Log</h3>
+                </div>
+                <p class="report-type-desc">
+                    Summarizes critical alerts, warning alerts, acknowledged actions, resolved statuses, and times for historical auditing.
+                </p>
+                <a href="{% url 'reports:dashboard' %}?report_type=alert_history" class="btn-generate">
+                    <i class="fa-solid fa-file-invoice"></i> Generate Report
+                </a>
+            </div>
+
+            <!-- Treatment & Hormone Card -->
+            <div class="report-type-card">
+                <div class="report-type-header">
+                    <div class="report-type-icon">
+                        <i class="fa-solid fa-syringe"></i>
+                    </div>
+                    <h3 class="report-type-title">Treatment & Hormone</h3>
+                </div>
+                <p class="report-type-desc">
+                    Provides details on active treatment protocol assignments, progress tracking, hormone reservoir capacities, and release history.
+                </p>
+                <a href="{% url 'reports:dashboard' %}?report_type=treatment_hormone" class="btn-generate">
+                    <i class="fa-solid fa-file-invoice"></i> Generate Report
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

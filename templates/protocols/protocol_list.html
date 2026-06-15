@@ -13,7 +13,7 @@
     </div>
     <div class="page-actions">
         <a href="{% url 'protocols:create' %}" class="btn btn-primary">
-            ➕ Create Protocol
+            <i class="fa-solid fa-plus"></i> Create Protocol
         </a>
     </div>
 </div>
@@ -23,8 +23,9 @@
     <div class="card-body" style="padding: 1.5rem;">
         <form method="get" class="filters-form">
             <div class="filters-row" style="grid-template-columns: 1fr auto;">
-                <div class="filter-group">
-                    <input type="text" name="search" class="form-input" placeholder="🔍 Search by protocol name or description" value="{{ search_query }}">
+                <div class="filter-group filter-search-wrapper" style="position: relative;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
+                    <input type="text" name="search" class="form-input" placeholder="Search by protocol name or description" value="{{ search_query }}" style="padding-left: 35px;">
                 </div>
                 
                 <div class="filter-actions">
@@ -98,7 +99,7 @@
 <div class="card">
     <div class="card-body">
         <div class="empty-state">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
+            <div style="font-size: 4rem; margin-bottom: 1rem; color: var(--text-secondary);"><i class="fa-solid fa-clipboard-list"></i></div>
             <h3>No Treatment Protocols Found</h3>
             <p>{% if search_query %}
                 No protocols match your search criteria.
@@ -106,7 +107,7 @@
                 Start by creating your first treatment protocol.
             {% endif %}</p>
             <a href="{% url 'protocols:create' %}" class="btn btn-primary" style="margin-top: 1rem;">
-                ➕ Create First Protocol
+                <i class="fa-solid fa-plus"></i> Create First Protocol
             </a>
         </div>
     </div>
