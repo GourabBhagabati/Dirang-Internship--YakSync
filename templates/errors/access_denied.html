@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/activity_logs.css' %}">
+{% endblock %}
+
+{% block title %}Access Denied - YakSync{% endblock %}
+
+{% block page_title %}Access Restricted{% endblock %}
+
+{% block content %}
+<div class="access-denied-container">
+    <div class="access-denied-card">
+        <div class="access-denied-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h2>Access Restricted</h2>
+        <p>You do not have the required permissions to view the Activity Logs auditing system. This module is restricted to system Administrators only.</p>
+        
+        <div class="access-denied-details">
+            <p><strong>Authenticated User:</strong> {{ user.get_full_name|default:user.username }} ({{ user.username }})</p>
+            <p><strong>Assigned Role:</strong> 
+                {% if user.profile %}
+                    {{ user.profile.get_role_display }}
+                {% elif user.is_superuser %}
+                    Administrator
+                {% else %}
+                    None / Guest
+                {% endif %}
+            </p>
+        </div>
+        
+        <a href="{% url 'dashboard:index' %}" class="btn-primary">
+            <i class="fa-solid fa-house"></i> Return to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

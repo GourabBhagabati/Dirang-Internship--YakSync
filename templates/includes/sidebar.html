@@ -53,10 +53,12 @@
             <span>Reports</span>
         </a>
     </li>
+    {% if request.user.is_superuser or request.user.profile.role == 'administrator' %}
     <li class="menu-item">
-        <a href="#" class="menu-link">
+        <a href="{% url 'logs:dashboard' %}" class="menu-link {% if request.resolver_match.app_name == 'logs' %}active{% endif %}">
             <span class="menu-icon"><i class="fa-solid fa-clock-rotate-left"></i></span>
             <span>Activity Logs</span>
         </a>
     </li>
+    {% endif %}
 </ul>

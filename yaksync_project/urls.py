@@ -19,6 +19,7 @@ urlpatterns = [
     path('protocols/', include('apps.protocols.urls')),
     path('alerts/', include('apps.alerts.urls')),
     path('reports/', include('apps.reports.urls')),
+    path('activity-logs/', include('apps.logs.urls')),
 ]
 
 if settings.DEBUG:
