@@ -87,12 +87,12 @@
                             <span class="badge badge-{{ device.status }}">{{ device.get_status_display }}</span>
                         </td>
                         <td>
-                            {% if device.battery_level >= 60 %}
-                                <span class="badge badge-battery-high">{{ device.battery_level }}%</span>
-                            {% elif device.battery_level >= 30 %}
-                                <span class="badge badge-battery-medium">{{ device.battery_level }}%</span>
+                            {% if device.battery_level > 60 %}
+                                <span class="badge badge-success"><i class="fa-solid fa-battery-full" style="margin-right: 4px;"></i>{{ device.battery_level }}%</span>
+                            {% elif device.battery_level >= 20 %}
+                                <span class="badge badge-warning"><i class="fa-solid fa-battery-half" style="margin-right: 4px;"></i>{{ device.battery_level }}%</span>
                             {% else %}
-                                <span class="badge badge-battery-low">{{ device.battery_level }}%</span>
+                                <span class="badge badge-danger"><i class="fa-solid fa-battery-empty" style="margin-right: 4px;"></i>{{ device.battery_level }}%</span>
                             {% endif %}
                         </td>
                         <td>

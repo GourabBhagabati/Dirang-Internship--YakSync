@@ -105,3 +105,23 @@ class ReportsViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/pdf')
         self.assertIn('attachment; filename="YakSync_Treatment_Hormone_Report_', response['Content-Disposition'])
+
+    def test_csv_export_requires_login(self):
+        csv_url = reverse('reports:csv_export')
+        response = self.client.get(csv_url, {'report_type': 'animal_health'})
+        self.assertEqual(response.status_code, 302)
+
+    def test_csv_export_animal_health_success(self):
+        self.client.login(username='reportuser', password='testpassword123')
+        csv_url = reverse('reports:csv_export')
+        response = self.client.get(csv_url, {'report_type': 'animal_health'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/csv')
+        self.assertIn('attachment; filename="YakSync_Animal_Health_Report_', response['Content-Disposition'])
+        
+        # Verify CSV content
+        content = response.content.decode('utf-8')
+        lines = content.strip().split('\r\n')
+        self.assertTrue(len(lines) > 1)
+        self.assertIn('Animal ID', lines[0])
+        self.assertIn('YAK-001', lines[1])

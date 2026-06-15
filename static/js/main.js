@@ -17,25 +17,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Mobile sidebar toggle
 document.addEventListener('DOMContentLoaded', function() {
-    const sidebar = document.querySelector('.sidebar');
+    const sidebar = document.getElementById('sidebarMenu');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('sidebarOverlay');
     
-    // Create mobile menu button
-    if (window.innerWidth <= 768 && sidebar) {
-        const menuBtn = document.createElement('button');
-        menuBtn.className = 'mobile-menu-btn';
-        menuBtn.innerHTML = '☰';
-        menuBtn.style.cssText = 'position: fixed; top: 15px; left: 15px; z-index: 2000; background: var(--primary-color); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 20px;';
-        
-        document.body.appendChild(menuBtn);
-        
-        menuBtn.addEventListener('click', function() {
+    if (sidebar && toggleBtn && overlay) {
+        function toggleSidebar() {
             sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        toggleBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleSidebar();
         });
         
-        // Close sidebar when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!sidebar.contains(e.target) && e.target !== menuBtn) {
-                sidebar.classList.remove('active');
+        overlay.addEventListener('click', closeSidebar);
+        
+        // Close sidebar on window resize to desktop size
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                closeSidebar();
             }
         });
     }
@@ -76,22 +83,52 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Profile Dropdown Toggle
+// Profile & Notifications Dropdown Toggle
 document.addEventListener('DOMContentLoaded', function() {
     const trigger = document.getElementById('userProfileTrigger');
     const dropdown = document.getElementById('profileDropdown');
+    const notifTrigger = document.getElementById('notificationsTrigger');
+    const notifDropdown = document.getElementById('notificationsDropdown');
     
     if (trigger && dropdown) {
         trigger.addEventListener('click', function(e) {
             e.stopPropagation();
             trigger.classList.toggle('active');
             dropdown.classList.toggle('active');
+            
+            // Close notification dropdown if open
+            if (notifTrigger && notifDropdown) {
+                notifTrigger.classList.remove('active');
+                notifDropdown.classList.remove('active');
+            }
         });
         
         document.addEventListener('click', function(e) {
             if (!dropdown.contains(e.target) && !trigger.contains(e.target)) {
                 trigger.classList.remove('active');
                 dropdown.classList.remove('active');
+            }
+        });
+    }
+
+    // Notifications Dropdown Toggle
+    if (notifTrigger && notifDropdown) {
+        notifTrigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            notifTrigger.classList.toggle('active');
+            notifDropdown.classList.toggle('active');
+            
+            // Close profile dropdown if open
+            if (trigger && dropdown) {
+                trigger.classList.remove('active');
+                dropdown.classList.remove('active');
+            }
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!notifDropdown.contains(e.target) && !notifTrigger.contains(e.target)) {
+                notifTrigger.classList.remove('active');
+                notifDropdown.classList.remove('active');
             }
         });
     }

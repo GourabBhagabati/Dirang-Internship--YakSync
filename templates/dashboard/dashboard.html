@@ -14,18 +14,25 @@
 <div class="dashboard-hero">
     <div class="hero-overlay">
 
-        <div class="dashboard-welcome">
-            <h2>
-                Welcome back, {{ user.get_full_name|default:user.username }}!
-            </h2>
-            <p>
-                Monitor your livestock health, IoT devices, and farm operations in real time.
-            </p>
+        <div class="dashboard-welcome" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; width: 100%;">
+            <div>
+                <h2 style="margin: 0 0 0.5rem 0;">
+                    Welcome back, {{ user.get_full_name|default:user.username }}!
+                </h2>
+                <p style="margin: 0;">
+                    Monitor your livestock health, IoT devices, and farm operations in real time.
+                </p>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(4px); border-radius: 12px; padding: 0.875rem 1.25rem; color: white; display: flex; flex-direction: column; gap: 0.375rem; border: 1px solid rgba(255, 255, 255, 0.15); font-size: 0.85rem; min-width: 200px;">
+                <div style="display: flex; align-items: center; gap: 6px;"><i class="fa-regular fa-clock"></i> <span id="currentClock">Loading...</span></div>
+                <div style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-arrows-rotate"></i> Last Sync: <strong>{% if last_sync %}{{ last_sync|date:"M d, Y, h:i A" }}{% else %}Just now{% endif %}</strong></div>
+            </div>
         </div>
 
         <div class="stats-grid">
 
-            <div class="stat-card">
+            <a href="{% url 'animals:list' %}" class="stat-card stat-card-link">
+                <i class="fa-solid fa-arrow-up-right-from-square stat-card-arrow" style="position: absolute; top: 12px; right: 12px; font-size: 0.75rem; color: var(--text-secondary); opacity: 0; transition: var(--transition);"></i>
                 <div class="stat-icon animal-icon">
                     <i class="fa-solid fa-cow"></i>
                 </div>
@@ -36,27 +43,31 @@
                         Total Animals
                     </div>
                 </div>
-            </div>
+            </a>
 
 
-            <div class="stat-card">
+            <a href="{% url 'devices:list' %}" class="stat-card stat-card-link">
+                <i class="fa-solid fa-arrow-up-right-from-square stat-card-arrow" style="position: absolute; top: 12px; right: 12px; font-size: 0.75rem; color: var(--text-secondary); opacity: 0; transition: var(--transition);"></i>
                 <div class="stat-icon device-icon">
                     <i class="fa-solid fa-microchip"></i>
                 </div>
 
                 <div class="stat-content">
                     <div class="stat-value">{{ total_devices }}</div>
-                    <div class="stat-label">
+                    <div class="stat-label" style="margin-bottom: 4px;">
                         Total Devices
                     </div>
-                    <div class="stat-sublabel">
-                        {{ active_devices }} active
+                    <div class="device-breakdown" style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 0.75rem; font-weight: 600;">
+                        <span class="badge badge-active" style="padding: 2px 6px; font-size: 0.65rem;"><i class="fa-solid fa-circle-check" style="margin-right: 3px;"></i>{{ active_devices }}</span>
+                        <span class="badge badge-inactive" style="padding: 2px 6px; font-size: 0.65rem;"><i class="fa-solid fa-circle-xmark" style="margin-right: 3px;"></i>{{ inactive_devices }}</span>
+                        <span class="badge badge-maintenance" style="padding: 2px 6px; font-size: 0.65rem;"><i class="fa-solid fa-triangle-exclamation" style="margin-right: 3px;"></i>{{ maintenance_devices }}</span>
                     </div>
                 </div>
-            </div>
+            </a>
 
 
-            <div class="stat-card">
+            <a href="{% url 'protocols:list' %}" class="stat-card stat-card-link">
+                <i class="fa-solid fa-arrow-up-right-from-square stat-card-arrow" style="position: absolute; top: 12px; right: 12px; font-size: 0.75rem; color: var(--text-secondary); opacity: 0; transition: var(--transition);"></i>
                 <div class="stat-icon protocol-icon">
                     <i class="fa-solid fa-clipboard-check"></i>
                 </div>
@@ -70,10 +81,11 @@
                         Active Protocols
                     </div>
                 </div>
-            </div>
+            </a>
 
 
-            <div class="stat-card">
+            <a href="{% url 'alerts:dashboard' %}" class="stat-card stat-card-link">
+                <i class="fa-solid fa-arrow-up-right-from-square stat-card-arrow" style="position: absolute; top: 12px; right: 12px; font-size: 0.75rem; color: var(--text-secondary); opacity: 0; transition: var(--transition);"></i>
                 <div class="stat-icon alert-icon">
                     <i class="fa-solid fa-bell"></i>
                 </div>
@@ -87,7 +99,7 @@
                         Active Alerts
                     </div>
                 </div>
-            </div>
+            </a>
 
         </div>
 
@@ -99,7 +111,7 @@
 
     <div class="dashboard-col-8">
 
-        <div class="card">
+        <div class="card" style="height: 100%; display: flex; flex-direction: column;">
 
             <div class="card-header">
                 <h3 class="card-title">
@@ -108,7 +120,7 @@
             </div>
 
 
-            <div class="card-body">
+            <div class="card-body" style="flex: 1;">
 
                 {% if recent_alerts %}
 
@@ -178,10 +190,228 @@
 
     <div class="dashboard-col-4">
 
-        <div class="card">
+        <!-- Weather Widget Card -->
+        <div class="card weather-card-new" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); position: relative; overflow: hidden; border: 1px solid var(--border-color); display: flex; flex-direction: column; height: 100%;">
+            <div class="card-header" style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="card-title" style="margin: 0; font-size: 1.15rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; color: var(--primary-color);">
+                    <i class="fa-solid fa-cloud-sun" style="color: var(--accent-color);"></i> Local Weather
+                </h3>
+                {% if weather %}
+                <span class="badge badge-source" style="font-size: 0.65rem; background: #e2e8f0; color: #475569; padding: 2px 6px; border-radius: 4px; font-weight: 500;">
+                    {{ weather.source }}
+                </span>
+                {% endif %}
+            </div>
+            
+            <div class="card-body" style="display: flex; flex-direction: column; justify-content: space-between; flex: 1; min-height: 200px; padding: 0.25rem 0 0 0;">
+                {% if weather %}
+                    <div style="display: flex; flex-direction: column; gap: 1.25rem; height: 100%;">
+                        <!-- Main Weather display -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.25rem 0;">
+                            <div>
+                                <h4 style="margin: 0 0 2px 0; font-size: 1.25rem; color: var(--text-primary); font-weight: 700; letter-spacing: -0.3px;">Dirang</h4>
+                                <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 500;">Arunachal Pradesh, IN</span>
+                            </div>
+                            <!-- Large Weather Icon -->
+                            <div style="font-size: 3.5rem; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));">
+                                {% if 'clear' in weather.condition|lower or 'sun' in weather.condition|lower %}
+                                    <i class="fa-solid fa-sun weather-icon-sun" style="color: #f59e0b;"></i>
+                                {% elif 'rain' in weather.condition|lower or 'drizzle' in weather.condition|lower or 'shower' in weather.condition|lower %}
+                                    <i class="fa-solid fa-cloud-showers-heavy" style="color: #3b82f6;"></i>
+                                {% elif 'thunder' in weather.condition|lower or 'bolt' in weather.condition|lower %}
+                                    <i class="fa-solid fa-cloud-bolt" style="color: #475569;"></i>
+                                {% elif 'snow' in weather.condition|lower or 'ice' in weather.condition|lower %}
+                                    <i class="fa-solid fa-snowflake" style="color: #cbd5e1;"></i>
+                                {% elif 'wind' in weather.condition|lower or 'breeze' in weather.condition|lower %}
+                                    <i class="fa-solid fa-wind" style="color: #64748b;"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-cloud-sun" style="color: #64748b;"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Temperature and Condition Text -->
+                        <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+                            <span style="font-size: 2.75rem; font-weight: 800; color: var(--primary-color); line-height: 1; letter-spacing: -1px;">
+                                {{ weather.temperature }}°C
+                            </span>
+                            <span style="font-size: 1rem; font-weight: 600; color: var(--text-secondary); text-transform: capitalize;">
+                                • {{ weather.condition }}
+                            </span>
+                        </div>
+
+                        <!-- Spacing divider -->
+                        <div style="height: 1px; background: var(--border-color); width: 100%;"></div>
+
+                        <!-- Weather Info Details Grid -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(59, 130, 246, 0.08); display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-size: 1.1rem;">
+                                    <i class="fa-solid fa-droplet"></i>
+                                </div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; letter-spacing: 0.3px;">Humidity</span>
+                                    <span style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);">{{ weather.humidity }}%</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(16, 185, 129, 0.08); display: flex; align-items: center; justify-content: center; color: var(--success-color); font-size: 1.1rem;">
+                                    <i class="fa-solid fa-wind"></i>
+                                </div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; letter-spacing: 0.3px;">Wind Speed</span>
+                                    <span style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);">{{ weather.wind_speed }} m/s</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Last updated info -->
+                        <div style="font-size: 0.7rem; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; justify-content: flex-end; margin-top: auto; padding-top: 0.5rem;">
+                            <i class="fa-regular fa-clock"></i> Obs: {{ weather.last_updated }}
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Clean styled fallback when API is genuinely unavailable -->
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 1rem; padding: 2rem 1rem; height: 100%; width: 100%;">
+                        <div style="width: 60px; height: 60px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.75rem;">
+                            <i class="fa-solid fa-cloud-sun-rain"></i>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            <h5 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">Weather Data Unavailable</h5>
+                            <p style="margin: 0; font-size: 0.8rem; color: var(--text-secondary); max-width: 220px;">
+                                Weather information currently unavailable
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="dashboard-row">
+
+    <div class="dashboard-col-8">
+
+        <div class="card" style="height: 100%; display: flex; flex-direction: column; margin-bottom: 0;">
 
             <div class="card-header">
+
                 <h3 class="card-title">
+                    Recent Activity
+                </h3>
+
+            </div>
+
+
+            <div class="card-body" style="flex: 1;">
+
+                {% if recent_activities %}
+
+                <div class="activity-list">
+
+                    {% for log in recent_activities %}
+
+                    <div class="activity-item">
+
+                        <div class="activity-icon" style="display: flex; align-items: center; justify-content: center;">
+
+                            {% if log.action_type == 'create' %}
+                            <i class="fa-solid fa-plus" style="font-size: 0.875rem;"></i>
+                            {% elif log.action_type == 'update' %}
+                            <i class="fa-solid fa-pen" style="font-size: 0.875rem;"></i>
+                            {% elif log.action_type == 'delete' %}
+                            <i class="fa-solid fa-trash" style="font-size: 0.875rem;"></i>
+                            {% elif log.action_type == 'login' %}
+                            <i class="fa-solid fa-unlock" style="font-size: 0.875rem;"></i>
+                            {% else %}
+                            <i class="fa-solid fa-file-lines" style="font-size: 0.875rem;"></i>
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="activity-details">
+
+                            <div class="activity-text">
+                                <strong>
+                                    {{ log.user.username|default:'System' }}
+                                </strong>
+                                {{ log.description }}
+                            </div>
+
+
+                            <div class="activity-time">
+                                {{ log.timestamp|timesince }} ago
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                {% else %}
+
+                <div class="empty-state">
+
+                    <p>
+                        No recent activity
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-col-4" style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+        <!-- Quick Actions Panel Card -->
+        <div class="card" style="margin-bottom: 0;">
+            <div class="card-header" style="margin-bottom: 0.75rem; padding-bottom: 0.75rem;">
+                <h3 class="card-title" style="font-size: 1.15rem; font-weight: 600;"><i class="fa-solid fa-bolt" style="margin-right: 0.5rem; color: var(--accent-color);"></i>Quick Actions</h3>
+            </div>
+            <div class="card-body">
+                <div class="quick-actions-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
+                    <a href="{% url 'animals:create' %}" class="btn-quick-action" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 0.5rem; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-weight: 600; font-size: 0.8rem; transition: var(--transition); text-align: center;">
+                        <i class="fa-solid fa-cow" style="font-size: 1.25rem; color: var(--secondary-color);"></i>
+                        <span>Add Animal</span>
+                    </a>
+                    <a href="{% url 'devices:create' %}" class="btn-quick-action" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 0.5rem; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-weight: 600; font-size: 0.8rem; transition: var(--transition); text-align: center;">
+                        <i class="fa-solid fa-microchip" style="font-size: 1.25rem; color: var(--secondary-color);"></i>
+                        <span>Register Device</span>
+                    </a>
+                    <a href="{% url 'protocols:create' %}" class="btn-quick-action" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 0.5rem; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-weight: 600; font-size: 0.8rem; transition: var(--transition); text-align: center;">
+                        <i class="fa-solid fa-clipboard-list" style="font-size: 1.25rem; color: var(--secondary-color);"></i>
+                        <span>Create Protocol</span>
+                    </a>
+                    <a href="{% url 'reports:dashboard' %}" class="btn-quick-action" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 0.5rem; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-weight: 600; font-size: 0.8rem; transition: var(--transition); text-align: center;">
+                        <i class="fa-solid fa-file-invoice" style="font-size: 1.25rem; color: var(--secondary-color);"></i>
+                        <span>Generate Report</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hormone Status Card -->
+        <div class="card" style="margin-bottom: 0; flex: 1;">
+
+            <div class="card-header" style="margin-bottom: 0.75rem; padding-bottom: 0.75rem;">
+                <h3 class="card-title" style="font-size: 1.15rem; font-weight: 600;">
                     Hormone Status
                 </h3>
             </div>
@@ -248,7 +478,7 @@
 
                 {% else %}
 
-                <div class="empty-state">
+                <div class="empty-state" style="padding: 1.5rem 1rem;">
                     <p>
                         No hormone reservoirs configured
                     </p>
@@ -265,84 +495,30 @@
 
 </div>
 
+{% endblock %}
 
-<div class="card">
-
-    <div class="card-header">
-
-        <h3 class="card-title">
-            Recent Activity
-        </h3>
-
-    </div>
-
-
-    <div class="card-body">
-
-        {% if recent_activities %}
-
-        <div class="activity-list">
-
-            {% for log in recent_activities %}
-
-            <div class="activity-item">
-
-                <div class="activity-icon" style="display: flex; align-items: center; justify-content: center;">
-
-                    {% if log.action_type == 'create' %}
-                    <i class="fa-solid fa-plus" style="font-size: 0.875rem;"></i>
-                    {% elif log.action_type == 'update' %}
-                    <i class="fa-solid fa-pen" style="font-size: 0.875rem;"></i>
-                    {% elif log.action_type == 'delete' %}
-                    <i class="fa-solid fa-trash" style="font-size: 0.875rem;"></i>
-                    {% elif log.action_type == 'login' %}
-                    <i class="fa-solid fa-unlock" style="font-size: 0.875rem;"></i>
-                    {% else %}
-                    <i class="fa-solid fa-file-lines" style="font-size: 0.875rem;"></i>
-                    {% endif %}
-
-                </div>
-
-
-                <div class="activity-details">
-
-                    <div class="activity-text">
-                        <strong>
-                            {{ log.user.username|default:'System' }}
-                        </strong>
-                        {{ log.description }}
-                    </div>
-
-
-                    <div class="activity-time">
-                        {{ log.timestamp|timesince }} ago
-                    </div>
-
-
-                </div>
-
-            </div>
-
-            {% endfor %}
-
-        </div>
-
-
-        {% else %}
-
-        <div class="empty-state">
-
-            <p>
-                No recent activity
-            </p>
-
-        </div>
-
-        {% endif %}
-
-
-    </div>
-
-</div>
-
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const clockElement = document.getElementById('currentClock');
+    if (clockElement) {
+        function updateClock() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true 
+            };
+            clockElement.textContent = now.toLocaleDateString('en-US', options);
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    }
+});
+</script>
 {% endblock %}

@@ -306,6 +306,27 @@
     background: #b91c1c;
 }
 
+.btn-download-csv {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: #10b981;
+    color: white !important;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.btn-download-csv:hover {
+    background: #059669;
+}
+
 .preview-body {
     overflow-x: auto;
     width: 100%;

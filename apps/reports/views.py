@@ -578,3 +578,31 @@ class GenerateReportPDFView(LoginRequiredMixin, View):
         response = HttpResponse(buffer, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
+
+
+class GenerateReportCSVView(LoginRequiredMixin, View):
+    def get(self, request):
+        report_type = request.GET.get('report_type')
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        animal_id = request.GET.get('animal')
+
+        if not report_type:
+            raise Http404("Report type not specified")
+
+        report_data = get_report_data(report_type, start_date, end_date, animal_id)
+
+        response = HttpResponse(content_type='text/csv')
+        date_str = datetime.date.today().strftime('%Y%m%d')
+        type_clean = report_type.replace('_', ' ').title().replace(' ', '_')
+        filename = f"YakSync_{type_clean}_Report_{date_str}.csv"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        import csv
+        writer = csv.writer(response)
+        writer.writerow(report_data['headers'])
+        
+        for row in report_data['rows']:
+            writer.writerow(row.values())
+
+        return response

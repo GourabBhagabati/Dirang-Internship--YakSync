@@ -120,3 +120,33 @@ class ProfileEditViewTests(TestCase):
         
         # Verify that UserProfile was created automatically
         self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
+
+    def test_password_change_requires_login(self):
+        password_change_url = reverse('authentication:password_change')
+        response = self.client.get(password_change_url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_password_change_get_success(self):
+        self.client.login(username='testuser', password='testpassword123')
+        password_change_url = reverse('authentication:password_change')
+        response = self.client.get(password_change_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'authentication/password_change.html')
+
+    def test_password_change_post_success(self):
+        self.client.login(username='testuser', password='testpassword123')
+        password_change_url = reverse('authentication:password_change')
+        data = {
+            'old_password': 'testpassword123',
+            'new_password1': 'newsecurepass123',
+            'new_password2': 'newsecurepass123',
+        }
+        response = self.client.post(password_change_url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        # Check that we are redirected back to profile edit page
+        self.assertTemplateUsed(response, 'authentication/profile_edit.html')
+        
+        # Verify login with new password works
+        self.client.logout()
+        login_success = self.client.login(username='testuser', password='newsecurepass123')
+        self.assertTrue(login_success)

@@ -114,6 +114,9 @@
                     <a href="{% url 'dashboard:index' %}" class="profile-btn profile-btn-secondary">
                         <i class="fa-solid fa-xmark"></i> Cancel
                     </a>
+                    <a href="{% url 'authentication:password_change' %}" class="profile-btn profile-btn-secondary" style="border: 1px solid var(--accent-color); color: var(--accent-color) !important; background: transparent; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none;">
+                        <i class="fa-solid fa-key"></i> Change Password
+                    </a>
                     <button type="submit" class="profile-btn profile-btn-primary">
                         <i class="fa-solid fa-check"></i> Save Changes
                     </button>

@@ -105,3 +105,14 @@ class ProfileEditView(LoginRequiredMixin, View):
         }
         return render(request, self.template_name, context)
 
+
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.messages.views import SuccessMessageMixin
+from .forms import CustomPasswordChangeForm
+
+class CustomPasswordChangeView(LoginRequiredMixin, SuccessMessageMixin, PasswordChangeView):
+    template_name = 'authentication/password_change.html'
+    success_url = reverse_lazy('authentication:profile_edit')
+    form_class = CustomPasswordChangeForm
+    success_message = 'Your password has been changed successfully!'
+

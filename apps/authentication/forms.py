@@ -149,3 +149,15 @@ class UserProfileUpdateForm(forms.ModelForm):
             if ext not in valid_extensions:
                 raise forms.ValidationError('Unsupported file extension. Only JPG, JPEG, and PNG are allowed.')
         return image
+
+
+from django.contrib.auth.forms import PasswordChangeForm
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'form-input',
+                'placeholder': 'Enter value...'
+            })

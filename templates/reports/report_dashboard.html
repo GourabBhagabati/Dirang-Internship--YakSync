@@ -120,92 +120,99 @@
                     <h3>{{ report_data.title }} Preview</h3>
                     <p>Showing records matching current filters. Click Download PDF for a complete detailed copy.</p>
                 </div>
-                <a href="{% url 'reports:pdf_export' %}?report_type={{ selected_report_type }}&start_date={{ selected_start_date|default:'' }}&end_date={{ selected_end_date|default:'' }}&animal={{ selected_animal|default:'' }}" class="btn-download-pdf">
-                    <i class="fa-solid fa-file-pdf"></i> Download PDF
-                </a>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="{% url 'reports:csv_export' %}?report_type={{ selected_report_type }}&start_date={{ selected_start_date|default:'' }}&end_date={{ selected_end_date|default:'' }}&animal={{ selected_animal|default:'' }}" class="btn-download-csv">
+                        <i class="fa-solid fa-file-csv"></i> Download CSV
+                    </a>
+                    <a href="{% url 'reports:pdf_export' %}?report_type={{ selected_report_type }}&start_date={{ selected_start_date|default:'' }}&end_date={{ selected_end_date|default:'' }}&animal={{ selected_animal|default:'' }}" class="btn-download-pdf">
+                        <i class="fa-solid fa-file-pdf"></i> Download PDF
+                    </a>
+                </div>
             </div>
             
             <div class="preview-body">
                 {% if report_data.rows %}
-                    <table class="reports-table">
-                        <thead>
-                            <tr>
-                                {% for header in report_data.headers %}
-                                    <th>{{ header }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% if report_data.report_type == 'animal_health' %}
-                                {% for row in report_data.rows %}
-                                    <tr>
-                                        <td><strong>{{ row.animal_id }}</strong></td>
-                                        <td>{{ row.name }}</td>
-                                        <td>{{ row.breed }}</td>
-                                        <td>{{ row.age }}</td>
-                                        <td>{{ row.weight }} kg</td>
-                                        <td>
-                                            <span class="badge badge-{{ row.health_status|lower|slugify }}">
-                                                {{ row.health_status }}
-                                            </span>
-                                        </td>
-                                        <td>{{ row.reproductive_status }}</td>
-                                        <td>{{ row.devices }}</td>
-                                    </tr>
-                                {% endfor %}
-                            {% elif report_data.report_type == 'iot_monitoring' %}
-                                {% for row in report_data.rows %}
-                                    <tr>
-                                        <td>{{ row.timestamp }}</td>
-                                        <td><strong>{{ row.animal_id }}</strong></td>
-                                        <td>{{ row.device }}</td>
-                                        <td>{{ row.sensor_type }}</td>
-                                        <td>{{ row.value }}</td>
-                                        <td>{{ row.unit }}</td>
-                                        <td>
-                                            <span class="badge badge-{{ row.is_abnormal|lower }}">
-                                                {{ row.is_abnormal }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            {% elif report_data.report_type == 'alert_history' %}
-                                {% for row in report_data.rows %}
-                                    <tr>
-                                        <td>{{ row.timestamp }}</td>
-                                        <td>{{ row.title }}</td>
-                                        <td>
-                                            <span class="badge badge-{{ row.severity|lower }}">
-                                                {{ row.severity }}
-                                            </span>
-                                        </td>
-                                        <td><strong>{{ row.animal_id }}</strong></td>
-                                        <td>{{ row.device }}</td>
-                                        <td>
-                                            <span class="badge badge-{{ row.status|lower }}">
-                                                {{ row.status }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            {% elif report_data.report_type == 'treatment_hormone' %}
-                                {% for row in report_data.rows %}
-                                    <tr>
-                                        <td>{{ row.start_date }}</td>
-                                        <td><strong>{{ row.animal_id }}</strong></td>
-                                        <td>{{ row.protocol }}</td>
-                                        <td>{{ row.progress }}</td>
-                                        <td>{{ row.assigned_by }}</td>
-                                        <td>
-                                            <span class="badge badge-{{ row.status|lower|slugify }}">
-                                                {{ row.status }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            {% endif %}
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="reports-table">
+                            <thead>
+                                <tr>
+                                    {% for header in report_data.headers %}
+                                        <th>{{ header }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if report_data.report_type == 'animal_health' %}
+                                    {% for row in report_data.rows %}
+                                        <tr>
+                                            <td><strong>{{ row.animal_id }}</strong></td>
+                                            <td>{{ row.name }}</td>
+                                            <td>{{ row.breed }}</td>
+                                            <td>{{ row.age }}</td>
+                                            <td>{{ row.weight }} kg</td>
+                                            <td>
+                                                <span class="badge badge-{{ row.health_status|lower|slugify }}">
+                                                    {{ row.health_status }}
+                                                </span>
+                                            </td>
+                                            <td>{{ row.reproductive_status }}</td>
+                                            <td>{{ row.devices }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% elif report_data.report_type == 'iot_monitoring' %}
+                                    {% for row in report_data.rows %}
+                                        <tr>
+                                            <td>{{ row.timestamp }}</td>
+                                            <td><strong>{{ row.animal_id }}</strong></td>
+                                            <td>{{ row.device }}</td>
+                                            <td>{{ row.sensor_type }}</td>
+                                            <td>{{ row.value }}</td>
+                                            <td>{{ row.unit }}</td>
+                                            <td>
+                                                <span class="badge badge-{{ row.is_abnormal|lower }}">
+                                                    {{ row.is_abnormal }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% elif report_data.report_type == 'alert_history' %}
+                                    {% for row in report_data.rows %}
+                                        <tr>
+                                            <td>{{ row.timestamp }}</td>
+                                            <td>{{ row.title }}</td>
+                                            <td>
+                                                <span class="badge badge-{{ row.severity|lower }}">
+                                                    {{ row.severity }}
+                                                </span>
+                                            </td>
+                                            <td><strong>{{ row.animal_id }}</strong></td>
+                                            <td>{{ row.device }}</td>
+                                            <td>
+                                                <span class="badge badge-{{ row.status|lower }}">
+                                                    {{ row.status }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% elif report_data.report_type == 'treatment_hormone' %}
+                                    {% for row in report_data.rows %}
+                                        <tr>
+                                            <td>{{ row.start_date }}</td>
+                                            <td><strong>{{ row.animal_id }}</strong></td>
+                                            <td>{{ row.protocol }}</td>
+                                            <td>{{ row.progress }}</td>
+                                            <td>{{ row.assigned_by }}</td>
+                                            <td>
+                                                <span class="badge badge-{{ row.status|lower|slugify }}">
+                                                    {{ row.status }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
                 {% else %}
                     <div class="empty-preview">
                         <i class="fa-solid fa-folder-open"></i>
