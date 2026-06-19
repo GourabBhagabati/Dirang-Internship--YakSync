@@ -3,25 +3,45 @@
 .reports-container {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 2.75rem !important; /* Increased whitespace separation between main sections */
 }
 
 .reports-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: -0.5rem;
 }
 
 .reports-title h2 {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.375rem;
+    letter-spacing: -0.02em;
 }
 
 .reports-title p {
     color: var(--text-secondary);
     font-size: 0.95rem;
+}
+
+/* Section Title Grouping */
+.section-title {
+    margin-bottom: -0.5rem;
+}
+
+.section-title h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+}
+
+.section-title p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
 }
 
 /* Metric Cards Grid */
@@ -33,19 +53,19 @@
 
 .metric-card {
     background: var(--card-bg);
-    border-radius: 12px;
+    border-radius: 12px !important; /* Standard consistent border radius */
     padding: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    border: 1px solid var(--border-color);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.025) !important;
+    border: none !important; /* Removed borders in favor of shadows/whitespace */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .metric-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+    transform: translateY(-3px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.06) !important;
 }
 
 .metric-info {
@@ -55,9 +75,10 @@
 }
 
 .metric-value {
-    font-size: 1.75rem;
+    font-size: 1.875rem; /* KPI numbers slightly larger and more prominent */
     font-weight: 700;
     color: var(--text-primary);
+    letter-spacing: -0.02em;
 }
 
 .metric-label {
@@ -70,7 +91,7 @@
     width: 48px;
     height: 48px;
     border-radius: 10px;
-    background: rgba(59, 130, 246, 0.1);
+    background: rgba(59, 130, 246, 0.08);
     color: var(--accent-color);
     display: flex;
     align-items: center;
@@ -81,26 +102,27 @@
 /* Filter Card */
 .filter-card {
     background: var(--card-bg);
-    border-radius: 14px;
-    padding: 1.5rem;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border-radius: 12px !important; /* Consistent border radius */
+    padding: 1.75rem 2rem; /* Better breathing spacing */
+    border: none !important; /* Removed border */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.025) !important;
 }
 
 .filter-title {
-    font-size: 1.1rem;
+    font-size: 1.125rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    letter-spacing: -0.01em;
 }
 
 .filter-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.25rem;
+    gap: 1.5rem; /* Increased spacing gap */
     align-items: flex-end;
 }
 
@@ -111,7 +133,7 @@
 }
 
 .filter-label {
-    font-size: 0.8125rem;
+    font-size: 0.75rem; /* Standardized label size */
     font-weight: 600;
     color: var(--text-secondary);
     text-transform: uppercase;
@@ -159,10 +181,13 @@
     background: var(--accent-color);
     color: white;
     flex: 1;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.18);
 }
 
 .btn-filter-primary:hover {
     background: var(--secondary-color);
+    box-shadow: 0 6px 15px rgba(30, 64, 175, 0.25);
+    transform: translateY(-1px);
 }
 
 .btn-filter-secondary {
@@ -180,24 +205,24 @@
 .report-types-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
+    gap: 1.75rem; /* Increased spacing */
 }
 
 .report-type-card {
     background: var(--card-bg);
-    border-radius: 14px;
-    border: 1px solid var(--border-color);
-    padding: 1.75rem;
+    border-radius: 12px !important; /* Consistent border radius */
+    border: none !important; /* Removed border */
+    padding: 2rem; /* Better padding */
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    gap: 1.5rem; /* Better gap spacing */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.025) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .report-type-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.06) !important;
 }
 
 .report-type-header {
@@ -207,27 +232,28 @@
 }
 
 .report-type-icon {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     border-radius: 10px;
-    background: rgba(30, 64, 175, 0.1);
+    background: rgba(30, 64, 175, 0.08);
     color: var(--secondary-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1.3rem;
 }
 
 .report-type-title {
-    font-size: 1.1rem;
+    font-size: 1.125rem;
     font-weight: 600;
     color: var(--text-primary);
+    letter-spacing: -0.015em;
 }
 
 .report-type-desc {
     font-size: 0.875rem;
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: 1.6;
     flex: 1;
 }
 
@@ -237,33 +263,36 @@
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem;
-    background: var(--primary-color);
+    padding: 0.875rem !important; /* Prominent action padding */
+    background: var(--accent-color) !important; /* Prominent accent color */
     color: white !important;
     border: none;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 0.875rem;
+    font-size: 0.9rem !important;
     cursor: pointer;
-    transition: background 0.2s ease;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25) !important; /* Subtle action highlight glow */
+    transition: all 0.25s ease !important;
     text-decoration: none;
 }
 
 .btn-generate:hover {
-    background: var(--secondary-color);
+    background: var(--secondary-color) !important;
+    box-shadow: 0 6px 15px rgba(30, 64, 175, 0.35) !important;
+    transform: translateY(-1px);
 }
 
 /* Report Preview Card */
 .preview-card {
     background: var(--card-bg);
-    border-radius: 16px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-radius: 12px !important; /* Consistent border radius */
+    border: none !important; /* Removed border */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.025) !important;
     overflow: hidden;
 }
 
 .preview-header {
-    padding: 1.5rem;
+    padding: 1.75rem 2rem; /* Better padding spacing */
     border-bottom: 1px solid var(--border-color);
     background: var(--bg-color);
     display: flex;
@@ -274,10 +303,11 @@
 }
 
 .preview-header-info h3 {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.375rem;
+    letter-spacing: -0.015em;
 }
 
 .preview-header-info p {
@@ -297,13 +327,14 @@
     font-weight: 600;
     font-size: 0.875rem;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, transform 0.2s ease;
     text-decoration: none;
-    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
 }
 
 .btn-download-pdf:hover {
     background: #b91c1c;
+    transform: translateY(-1px);
 }
 
 .btn-download-csv {
@@ -318,13 +349,14 @@
     font-weight: 600;
     font-size: 0.875rem;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, transform 0.2s ease;
     text-decoration: none;
-    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
 }
 
 .btn-download-csv:hover {
     background: #059669;
+    transform: translateY(-1px);
 }
 
 .preview-body {
@@ -343,30 +375,35 @@
     background: var(--bg-color);
     color: var(--text-secondary);
     font-weight: 600;
-    padding: 1rem;
+    padding: 1.125rem 1.5rem; /* Matching standardized table paddings */
     border-bottom: 1px solid var(--border-color);
     text-transform: uppercase;
     font-size: 0.75rem;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.05em;
 }
 
 .reports-table td {
-    padding: 1rem;
+    padding: 1.125rem 1.5rem; /* Matching standardized table paddings */
     border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
     vertical-align: middle;
+    line-height: 1.5;
 }
 
 .reports-table tr:last-child td {
     border-bottom: none;
 }
 
+.reports-table tr {
+    transition: background-color 0.15s ease;
+}
+
 .reports-table tr:hover td {
-    background: #f8fafc;
+    background: #f1f5f9;
 }
 
 .empty-preview {
-    padding: 3rem;
+    padding: 4rem 2rem;
     text-align: center;
     color: var(--text-secondary);
     display: flex;
@@ -376,7 +413,7 @@
 }
 
 .empty-preview i {
-    font-size: 3rem;
+    font-size: 3.5rem;
     color: var(--border-color);
 }
 

@@ -1,6 +1,38 @@
 /* Dashboard Specific Styles */
-/* Hero Section */
 
+/* Base Dashboard Card Styles (only overrides on the dashboard page) */
+.card {
+    background: var(--card-bg) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.025) !important;
+    padding: 2.25rem !important;
+    border: none !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.card:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.06) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Card Header overrides (spacing via whitespace rather than borders) */
+.card-header {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 1.75rem !important;
+}
+
+.card-body {
+    padding: 0 !important;
+}
+
+/* Telemetry Analytics Card specific margins */
+.telemetry-analytics-card {
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+}
+
+/* Hero Section (Welcome Banner) */
 .dashboard-hero {
     background:
         linear-gradient(
@@ -8,41 +40,21 @@
             rgba(15, 23, 42, 0.75)
         ),
         url("../images/YakBackground.png");
-
     background-size: cover;
     background-position: center;
-    border-radius: 24px;
-
-    padding: 3rem;
-    margin-bottom: 2rem;
-
+    border-radius: 12px !important;
+    padding: 3rem !important;
+    margin-bottom: 2.5rem !important;
     box-shadow: 
-        0 15px 40px rgba(15, 23, 42, 0.25);
-
+        0 20px 40px -15px rgba(51, 65, 85, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset !important;
     overflow: hidden;
+    transition: all 0.3s ease;
 }
 
 .hero-overlay {
     width: 100%;
 }
-/* .dashboard-welcome {
-    margin-bottom: 2rem;
-} */
-
-
-
-/* .dashboard-welcome h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-}
-
-.dashboard-welcome p {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-} */
-
 
 .dashboard-welcome {
     margin-bottom: 2rem;
@@ -50,92 +62,95 @@
 }
 
 .dashboard-welcome h2 {
-    font-size: 2.3rem;
+    font-size: 2.25rem;
     font-weight: 700;
     color: white;
     margin-bottom: 0.5rem;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.03em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .dashboard-welcome p {
-    color: rgba(255,255,255,0.85);
-    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* Clock / Sync badge in Hero Card */
+.hero-clock-badge {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    padding: 0.875rem 1.25rem !important;
+    color: white !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.375rem !important;
+    font-size: 0.85rem !important;
+    min-width: 200px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Stats Grid */
-/* .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-} */
-
-
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1.25rem;
+    gap: 1.5rem !important; /* Increased gap */
 }
 
-/* .stat-card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
+/* Translucent Glassmorphic Stat Cards inside Hero Banner */
+.dashboard-hero .stat-card {
+    background: rgba(255, 255, 255, 0.06) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    padding: 1.25rem 1.5rem !important;
     display: flex;
     align-items: center;
-    gap: 1.25rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    transition: var(--transition);
-}
-
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-} */
-
-
-.stat-card {
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(8px);
-
-    border-radius: 12px; /* Polish rounded corners */
-    border: 1px solid var(--border-color);
-    padding: 1rem;
-
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    gap: 1.25rem !important;
     position: relative;
     text-decoration: none;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.12) !important;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
 
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+.dashboard-hero .stat-card:hover {
+    transform: translateY(-4px) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2) !important;
+}
 
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+.dashboard-hero .stat-card:hover .stat-icon {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.12);
 }
 
 .stat-card-link {
     cursor: pointer;
 }
 
-.stat-card:hover {
-    transform: translateY(-4px);
-    background: white;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
 .stat-card-link:hover .stat-card-arrow {
-    opacity: 0.8 !important;
+    opacity: 0.9 !important;
+    color: white !important;
     transform: translate(2px, -2px) !important;
 }
 
 .stat-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 3px;
+    width: 54px;
+    height: 54px;
+    border-radius: 12px !important; /* Consistent border-radius for icon backgrounds */
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .animal-icon {
@@ -160,33 +175,51 @@
 
 .stat-content {
     flex: 1;
+    min-width: 0;
 }
 
 .stat-value {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    line-height: 1;
+    font-size: 2.5rem !important;
+    font-weight: 700 !important;
+    color: white !important;
+    line-height: 1 !important;
+    letter-spacing: -0.03em !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.08);
 }
 
 .stat-label {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-size: 0.875rem !important;
     margin-top: 0.5rem;
+    font-weight: 500 !important;
+    letter-spacing: -0.01em !important;
 }
 
-.stat-sublabel {
-    color: var(--success-color);
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
+/* Overriding device breakdown badges to look elegant on dark backdrop */
+.dashboard-hero .stat-card .badge {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+.dashboard-hero .stat-card .badge-active {
+    border-color: rgba(16, 185, 129, 0.4) !important;
+    color: #10b981 !important;
+}
+.dashboard-hero .stat-card .badge-inactive {
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    color: #f87171 !important;
+}
+.dashboard-hero .stat-card .badge-maintenance {
+    border-color: rgba(245, 158, 11, 0.4) !important;
+    color: #fbbf24 !important;
 }
 
-/* Dashboard Grid */
+/* Dashboard Row Grid */
 .dashboard-row {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    gap: 2rem !important; /* Increased gap */
+    margin-bottom: 2rem !important; /* Increased margin */
 }
 
 .dashboard-col-8,
@@ -194,7 +227,23 @@
     min-width: 0;
 }
 
-/* Alert List */
+.dashboard-col-4 {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem !important; /* Increased gap */
+}
+
+/* Weather Card Layout (Borders removed in favor of spacing) */
+.weather-card-new {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Alert List & Items styling */
 .alert-list {
     display: flex;
     flex-direction: column;
@@ -205,10 +254,11 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem;
+    padding: 1.25rem !important; /* Increased padding */
     background: var(--bg-color);
-    border-radius: 8px;
+    border-radius: 12px !important; /* Consistent border radius */
     border-left: 4px solid var(--secondary-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
     transition: var(--transition);
 }
 
@@ -237,14 +287,17 @@
 }
 
 .alert-title {
-    font-weight: 600;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
     color: var(--text-primary);
     margin-bottom: 0.25rem;
+    letter-spacing: -0.01em !important;
 }
 
 .alert-meta {
-    font-size: 0.85rem;
+    font-size: 0.8rem !important;
     color: var(--text-secondary);
+    font-weight: 500 !important;
 }
 
 .alert-badge {
@@ -270,27 +323,24 @@
     color: var(--secondary-color);
 }
 
-/* Hormone List */
+/* Hormone List (Removing border lines, increasing vertical whitespace separation) */
 .hormone-list {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1.5rem !important; /* Increased spacing */
 }
 
 .hormone-item {
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.hormone-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
+    padding-bottom: 0 !important;
+    border-bottom: none !important; /* Removed separator border line */
 }
 
 .hormone-name {
-    font-weight: 600;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
+    letter-spacing: -0.01em !important;
 }
 
 .hormone-progress {
@@ -313,11 +363,12 @@
 }
 
 .hormone-quantity {
-    font-size: 0.85rem;
+    font-size: 0.8rem !important;
     color: var(--text-secondary);
+    font-weight: 500 !important;
 }
 
-/* Activity List */
+/* Activity List & Items styling */
 .activity-list {
     display: flex;
     flex-direction: column;
@@ -327,9 +378,10 @@
 .activity-item {
     display: flex;
     gap: 1rem;
-    padding: 0.75rem;
+    padding: 1rem 1.25rem !important; /* Increased padding */
     background: var(--bg-color);
-    border-radius: 8px;
+    border-radius: 12px !important; /* Consistent border radius */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
 }
 
 .activity-icon {
@@ -337,10 +389,11 @@
     width: 40px;
     height: 40px;
     background: white;
-    border-radius: 8px;
+    border-radius: 8px !important;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .activity-details {
@@ -348,13 +401,20 @@
 }
 
 .activity-text {
+    font-size: 0.9rem !important;
     color: var(--text-primary);
     margin-bottom: 0.25rem;
+    line-height: 1.4 !important;
+}
+
+.activity-text strong {
+    font-weight: 600 !important;
 }
 
 .activity-time {
-    font-size: 0.8rem;
+    font-size: 0.775rem !important;
     color: var(--text-secondary);
+    font-weight: 500 !important;
 }
 
 /* Empty State */
@@ -368,39 +428,31 @@
     font-size: 1rem;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-    .dashboard-row {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    .dashboard-row > div > .card {
-        margin-bottom: 0;
-    }
-}
-
-@media (max-width: 768px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .dashboard-welcome h2 {
-        font-size: 1.5rem;
-    }
-    
-    .stat-value {
-        font-size: 2.2rem;
-    }
+/* Quick Actions Card overrides */
+.btn-quick-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem !important;
+    padding: 1.25rem 0.75rem !important;
+    background: var(--bg-color) !important;
+    border: none !important; /* Removed separating button border line */
+    border-radius: 12px !important; /* Consistent border radius */
+    color: var(--text-primary) !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+    transition: var(--transition) !important;
+    text-align: center !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -2px rgba(0, 0, 0, 0.02) !important;
 }
 
 /* Quick Actions Button Hover Effect */
 .btn-quick-action:hover {
     background: var(--border-color) !important;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
 }
 
 /* Weather Card Animations */
@@ -419,3 +471,48 @@
     display: inline-block;
 }
 
+/* Responsive Overrides (Maintain responsive behavior intact) */
+@media (max-width: 1024px) {
+    .dashboard-row {
+        grid-template-columns: 1fr;
+        gap: 2rem !important;
+    }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem !important;
+    }
+    .dashboard-row > div > .card {
+        margin-bottom: 0;
+    }
+    .card {
+        padding: 1.75rem !important; /* Slightly smaller padding on medium viewports */
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem !important;
+    }
+    
+    .dashboard-hero {
+        padding: 1.75rem !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    .dashboard-welcome h2 {
+        font-size: 1.6rem;
+    }
+    
+    .dashboard-welcome p {
+        font-size: 0.95rem;
+    }
+    
+    .stat-value {
+        font-size: 2.2rem;
+    }
+
+    .card {
+        padding: 1.5rem !important; /* Standard base card padding on mobile screens */
+    }
+}
