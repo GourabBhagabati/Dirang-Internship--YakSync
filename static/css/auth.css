@@ -9,6 +9,12 @@
 } */
 
 .auth-layout {
+    --text-primary: #0f172a;
+    --border-color: #cbd5e1;
+    --text-secondary: #64748b;
+    --card-bg: #ffffff;
+    --bg-color: #f1f5f9;
+
     min-height: 100vh;
     display: flex;
     align-items: center;

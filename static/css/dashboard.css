@@ -235,7 +235,7 @@
 
 /* Weather Card Layout (Borders removed in favor of spacing) */
 .weather-card-new {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    background: var(--weather-gradient) !important;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -263,7 +263,7 @@
 }
 
 .alert-item:hover {
-    background: #e8f4f8;
+    background: var(--hover-bg);
 }
 
 .alert-item.severity-critical {
@@ -309,17 +309,17 @@
 }
 
 .badge-critical {
-    background: #fee;
+    background: var(--badge-critical-bg);
     color: var(--danger-color);
 }
 
 .badge-warning {
-    background: #fff3e0;
+    background: var(--badge-warning-bg);
     color: var(--warning-color);
 }
 
 .badge-info {
-    background: #e3f2fd;
+    background: var(--badge-info-bg);
     color: var(--secondary-color);
 }
 
@@ -388,7 +388,7 @@
     font-size: 1.25rem;
     width: 40px;
     height: 40px;
-    background: white;
+    background: var(--activity-icon-bg);
     border-radius: 8px !important;
     display: flex;
     align-items: center;
@@ -516,3 +516,30 @@
         padding: 1.5rem !important; /* Standard base card padding on mobile screens */
     }
 }
+
+/* Large Screen & Ultrawide Display Optimizations */
+@media (min-width: 1400px) {
+    .quick-actions-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 1rem !important;
+    }
+}
+
+@media (min-width: 1600px) {
+    .stats-grid {
+        gap: 2rem !important;
+    }
+    
+    .dashboard-hero .stat-card {
+        padding: 1.5rem 1.75rem !important;
+    }
+    
+    #dashboardChartContainer {
+        height: 400px !important;
+    }
+    
+    .dashboard-row {
+        gap: 2.5rem !important;
+    }
+}
+

@@ -186,7 +186,7 @@
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-secondary);
-    background: #f8fafc;
+    background: var(--reset-btn-bg);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     cursor: pointer;
@@ -195,7 +195,7 @@
 }
 
 .btn-reset:hover {
-    background: #f1f5f9;
+    background: var(--reset-btn-hover-bg);
     color: var(--text-primary);
 }
 
@@ -221,7 +221,7 @@
 }
 
 .logs-table th {
-    background: #f8fafc;
+    background: var(--table-header-bg);
     padding: 1rem 1.25rem;
     font-weight: 600;
     color: var(--text-secondary);
@@ -243,7 +243,7 @@
 }
 
 .logs-table tr:hover td {
-    background: #f8fafc;
+    background: var(--hover-bg);
 }
 
 /* User Profile Column */
@@ -303,8 +303,8 @@
 
 /* Role Badges */
 .badge-role-admin {
-    background: rgba(15, 23, 42, 0.1);
-    color: #0f172a;
+    background: var(--badge-admin-bg);
+    color: var(--badge-admin-color);
 }
 .badge-role-vet {
     background: rgba(139, 92, 246, 0.1);
@@ -513,7 +513,7 @@
 }
 
 .access-denied-details {
-    background: #f8fafc;
+    background: var(--access-denied-details-bg);
     border-radius: 8px;
     padding: 1rem;
     text-align: left;

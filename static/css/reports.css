@@ -399,7 +399,7 @@
 }
 
 .reports-table tr:hover td {
-    background: #f1f5f9;
+    background: var(--hover-bg);
 }
 
 .empty-preview {

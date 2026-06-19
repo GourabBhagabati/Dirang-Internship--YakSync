@@ -15,37 +15,51 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Mobile sidebar toggle
+// State-persisting collapsible sidebar controller
 document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebarMenu');
     const toggleBtn = document.getElementById('sidebarToggle');
+    const closeBtn = document.getElementById('sidebarClose');
     const overlay = document.getElementById('sidebarOverlay');
     
     if (sidebar && toggleBtn && overlay) {
-        function toggleSidebar() {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
+        function openSidebar() {
+            document.body.classList.add('sidebar-open');
+            localStorage.setItem('sidebarState', 'open');
         }
 
         function closeSidebar() {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
+            document.body.classList.remove('sidebar-open');
+            localStorage.setItem('sidebarState', 'closed');
         }
 
         toggleBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            toggleSidebar();
+            if (document.body.classList.contains('sidebar-open')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
         });
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeSidebar);
+        }
         
         overlay.addEventListener('click', closeSidebar);
         
-        // Close sidebar on window resize to desktop size
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
+        // Keyboard accessibility: Escape closes sidebar
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
                 closeSidebar();
             }
         });
     }
+
+    // Remove no-transitions flag shortly after DOM load to enable smooth styling animations
+    setTimeout(function() {
+        document.body.classList.remove('no-transitions');
+    }, 100);
 });
 
 // Form validation helper
@@ -218,6 +232,41 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('notificationsTrigger')) {
         // Repeated polling (10s)
         setInterval(fetchUpdates, POLL_INTERVAL);
+    }
+});
+
+// Theme Toggle Controller
+document.addEventListener('DOMContentLoaded', function() {
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update button icon
+            const icon = themeToggleBtn.querySelector('i');
+            if (icon) {
+                if (newTheme === 'dark') {
+                    icon.className = 'fa-solid fa-sun';
+                } else {
+                    icon.className = 'fa-solid fa-moon';
+                }
+            }
+        });
+        
+        // Synchronize initial icon on load
+        const icon = themeToggleBtn.querySelector('i');
+        if (icon) {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            if (currentTheme === 'dark') {
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                icon.className = 'fa-solid fa-moon';
+            }
+        }
     }
 });
 

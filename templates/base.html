@@ -10,7 +10,19 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="no-transitions">
+    <script>
+        (function() {
+            const state = localStorage.getItem('sidebarState');
+            if (state === 'open') {
+                document.body.classList.add('sidebar-open');
+            }
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
     {% if user.is_authenticated %}
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <div class="layout">
