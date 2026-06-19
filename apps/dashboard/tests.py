@@ -88,3 +88,74 @@ class DashboardTests(TestCase):
         self.assertContains(response, 'Warning Battery Alert')
         self.assertNotContains(response, 'Resolved Alert')
         self.assertContains(response, 'notification-badge')
+
+
+class WeatherCacheTests(TestCase):
+    def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
+
+    @patch('apps.dashboard.weather._fetch_weather_data')
+    def test_weather_data_caching(self, mock_fetch):
+        """Test that get_weather_data caches results and avoids calling fetch again"""
+        mock_data = {
+            'temperature': 20.0,
+            'humidity': 60,
+            'condition': 'Sunny',
+            'wind_speed': 2.5,
+            'last_updated': '2026-06-19 12:00',
+            'source': 'Open-Meteo'
+        }
+        mock_fetch.return_value = mock_data
+
+        from apps.dashboard.weather import get_weather_data
+        
+        # First call (cache miss)
+        first_call = get_weather_data()
+        self.assertEqual(first_call, mock_data)
+        self.assertEqual(mock_fetch.call_count, 1)
+
+        # Second call (cache hit)
+        second_call = get_weather_data()
+        self.assertEqual(second_call, mock_data)
+        self.assertEqual(mock_fetch.call_count, 1)  # Should read from cache, not fetch again
+
+
+class DashboardUpdatesAPITests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='apiuser', password='apipassword123')
+        self.updates_url = reverse('dashboard:updates_api')
+
+    def test_unauthenticated_api_request_redirects(self):
+        """Test that unauthenticated requests to the updates API are redirected to login"""
+        response = self.client.get(self.updates_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/auth/login/', response.url)
+
+    def test_authenticated_api_request(self):
+        """Test that authenticated requests return valid dynamic updates payload"""
+        self.client.login(username='apiuser', password='apipassword123')
+        response = self.client.get(self.updates_url)
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['content-type'], 'application/json')
+        
+        data = response.json()
+        self.assertIn('unread_critical_count', data)
+        self.assertIn('stats', data)
+        self.assertIn('html', data)
+        
+        # Verify stats keys
+        stats = data['stats']
+        self.assertEqual(stats['total_animals'], 0)
+        self.assertEqual(stats['total_devices'], 0)
+        
+        # Verify HTML fragments keys
+        html = data['html']
+        self.assertIn('navbar_alerts', html)
+        self.assertIn('dashboard_alerts', html)
+        self.assertIn('dashboard_activities', html)
+        self.assertIn('dashboard_hormones', html)
+
+

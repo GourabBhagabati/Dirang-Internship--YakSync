@@ -1,0 +1,36 @@
+{% if hormone_reservoirs %}
+<div class="hormone-list">
+    {% for reservoir in hormone_reservoirs %}
+    <div class="hormone-item">
+        <div class="hormone-name">
+            {{ reservoir.hormone_type }}
+        </div>
+        <div class="hormone-progress">
+            <div class="progress-bar">
+                <div class="progress-fill"
+                style="width: {% widthratio reservoir.current_quantity reservoir.initial_quantity 100 %}%;
+                background:
+                {% if reservoir.is_low %}
+                var(--danger-color)
+                {% else %}
+                var(--success-color)
+                {% endif %};">
+                </div>
+            </div>
+            <div class="hormone-quantity">
+                {{ reservoir.current_quantity }}
+                /
+                {{ reservoir.initial_quantity }}
+                {{ reservoir.unit }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="padding: 1.5rem 1rem;">
+    <p>
+        No hormone reservoirs configured
+    </p>
+</div>
+{% endif %}

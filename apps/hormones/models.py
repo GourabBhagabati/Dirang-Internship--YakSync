@@ -43,6 +43,9 @@ class HormoneRelease(models.Model):
         ordering = ['-timestamp']
         verbose_name = 'Hormone Release'
         verbose_name_plural = 'Hormone Releases'
+        indexes = [
+            models.Index(fields=['-timestamp']),
+        ]
     
     def __str__(self):
         return f"{self.reservoir.hormone_type} - {self.quantity} to {self.animal.animal_id}"

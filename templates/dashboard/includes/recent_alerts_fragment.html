@@ -1,0 +1,36 @@
+{% if recent_alerts %}
+<div class="alert-list">
+    {% for alert in recent_alerts %}
+    <div class="alert-item severity-{{ alert.severity }}">
+        <div class="alert-icon">
+            {% if alert.severity == 'critical' %}
+            <i class="fa-solid fa-circle-exclamation"></i>
+            {% elif alert.severity == 'warning' %}
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            {% else %}
+            <i class="fa-solid fa-circle-info"></i>
+            {% endif %}
+        </div>
+        <div class="alert-details">
+            <div class="alert-title">
+                {{ alert.title }}
+            </div>
+            <div class="alert-meta">
+                {{ alert.get_alert_type_display }}
+                •
+                {{ alert.timestamp|timesince }} ago
+            </div>
+        </div>
+        <div class="alert-badge badge-{{ alert.severity }}">
+            {{ alert.get_severity_display }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>
+        <i class="fa-solid fa-circle-check" style="color: #27ae60; margin-right: 0.5rem;"></i> No active alerts. System running smoothly!
+    </p>
+</div>
+{% endif %}

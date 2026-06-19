@@ -70,6 +70,10 @@ class TreatmentAssignment(models.Model):
         ordering = ['-created_at']
         verbose_name = 'Treatment Assignment'
         verbose_name_plural = 'Treatment Assignments'
+        indexes = [
+            models.Index(fields=['status', '-created_at']),
+            models.Index(fields=['start_date']),
+        ]
     
     def __str__(self):
         return f"{self.protocol.name} → {self.animal.animal_id}"

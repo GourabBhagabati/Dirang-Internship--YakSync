@@ -117,3 +117,64 @@ class SensorReadingDetailView(LoginRequiredMixin, DetailView):
             .order_by('-timestamp')[:10]
         )
         return context
+
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views import View
+
+class HerdTelemetryAPIView(LoginRequiredMixin, View):
+    """API endpoint returning latest telemetry for the herd"""
+    login_url = '/auth/login/'
+
+    def get(self, request):
+        readings = SensorReading.objects.select_related('animal').order_by('-timestamp')[:30]
+        
+        temp_readings = [r for r in readings if r.sensor_type == 'temperature']
+        move_readings = [r for r in readings if r.sensor_type == 'movement']
+        
+        temp_data = [{
+            'timestamp': r.timestamp.strftime('%H:%M'),
+            'value': float(r.value),
+            'animal_id': r.animal.animal_id,
+        } for r in reversed(temp_readings)]
+        
+        move_data = [{
+            'timestamp': r.timestamp.strftime('%H:%M'),
+            'value': float(r.value),
+            'animal_id': r.animal.animal_id,
+        } for r in reversed(move_readings)]
+        
+        return JsonResponse({
+            'temp_data': temp_data,
+            'move_data': move_data
+        })
+
+
+class AnimalTelemetryAPIView(LoginRequiredMixin, View):
+    """API endpoint returning latest telemetry for a specific animal"""
+    login_url = '/auth/login/'
+
+    def get(self, request, animal_id):
+        animal = get_object_or_404(Animal, pk=animal_id)
+        
+        temp_readings = SensorReading.objects.filter(animal=animal, sensor_type='temperature').order_by('-timestamp')[:30]
+        move_readings = SensorReading.objects.filter(animal=animal, sensor_type='movement').order_by('-timestamp')[:30]
+        
+        temp_data = [{
+            'timestamp': r.timestamp.strftime('%m-%d %H:%M'),
+            'value': float(r.value)
+        } for r in reversed(temp_readings)]
+        
+        move_data = [{
+            'timestamp': r.timestamp.strftime('%m-%d %H:%M'),
+            'value': float(r.value)
+        } for r in reversed(move_readings)]
+        
+        return JsonResponse({
+            'animal_id': animal.animal_id,
+            'name': animal.name,
+            'temp_data': temp_data,
+            'move_data': move_data
+        })
+

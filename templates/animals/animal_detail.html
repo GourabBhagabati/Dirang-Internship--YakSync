@@ -138,6 +138,33 @@
     </div>
 </div>
 
+<!-- Telemetry Visualization Trends -->
+<div class="card" style="margin-top: 1.5rem;">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fa-solid fa-chart-line"></i> Telemetry Trends (Last 30 Readings)</h3>
+    </div>
+    <div class="card-body">
+        <div id="noTelemetryWarning" style="display: none; padding: 2rem 1rem; text-align: center; color: var(--text-secondary);">
+            <i class="fa-solid fa-circle-info" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; color: var(--text-secondary); opacity: 0.5;"></i>
+            No physiological sensor readings logged yet. Ensure an active IoT device is assigned.
+        </div>
+        <div id="chartsContainer" class="charts-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="chart-wrapper">
+                <h4 style="margin-bottom: 0.5rem; text-align: center; color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;">Body Temperature (°C)</h4>
+                <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="tempChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <h4 style="margin-bottom: 0.5rem; text-align: center; color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;">Movement Level (Steps)</h4>
+                <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="moveChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 .page-header {
     display: flex;
@@ -263,3 +290,102 @@
 }
 </style>
 {% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const animalId = "{{ animal.id }}";
+    
+    fetch(`/monitoring/api/telemetry/${animalId}/`)
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch telemetry data');
+            return response.json();
+        })
+        .then(data => {
+            const temps = data.temp_data || [];
+            const moves = data.move_data || [];
+            
+            if (temps.length === 0 && moves.length === 0) {
+                document.getElementById('chartsContainer').style.display = 'none';
+                document.getElementById('noTelemetryWarning').style.display = 'block';
+                return;
+            }
+            
+            // Render Temp Chart
+            const tempCtx = document.getElementById('tempChart').getContext('2d');
+            new Chart(tempCtx, {
+                type: 'line',
+                data: {
+                    labels: temps.map(item => item.timestamp),
+                    datasets: [{
+                        label: 'Temperature (°C)',
+                        data: temps.map(item => item.value),
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 36,
+                            max: 42,
+                            ticks: {
+                                callback: function(value) { return value + '°C'; }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+            
+            // Render Move Chart
+            const moveCtx = document.getElementById('moveChart').getContext('2d');
+            new Chart(moveCtx, {
+                type: 'line',
+                data: {
+                    labels: moves.map(item => item.timestamp),
+                    datasets: [{
+                        label: 'Movement (Steps)',
+                        data: moves.map(item => item.value),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) { return value + ' steps'; }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error loading telemetry charts:', error);
+            document.getElementById('chartsContainer').style.display = 'none';
+            document.getElementById('noTelemetryWarning').style.display = 'block';
+            document.getElementById('noTelemetryWarning').textContent = 'Error loading telemetry chart data.';
+        });
+});
+</script>
+{% endblock %}
+

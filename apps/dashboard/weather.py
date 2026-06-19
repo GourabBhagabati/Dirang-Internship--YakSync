@@ -5,7 +5,8 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-def get_weather_data():
+
+def _fetch_weather_data():
     """Fetch current weather data for Dirang, Arunachal Pradesh, India"""
     # Try to load API keys from Django settings, or fall back to environment variables
     openweather_key = None
@@ -136,4 +137,33 @@ def get_weather_data():
 
     # Failure / Fallback: return None
     return None
+
+
+def get_weather_data():
+    """Fetch current weather data for Dirang, Arunachal Pradesh, India with caching"""
+    from django.core.cache import cache
+    cache_key = 'dirang_weather_data'
+    
+    try:
+        cached_weather = cache.get(cache_key)
+        if cached_weather:
+            logger.debug("Weather data retrieved from cache.")
+            return cached_weather
+    except Exception as e:
+        logger.error(f"Error reading from weather cache: {e}")
+        cached_weather = None
+
+    # Cache miss: fetch fresh data
+    weather_data = _fetch_weather_data()
+    
+    if weather_data:
+        try:
+            # Cache for 30 minutes (1800 seconds)
+            cache.set(cache_key, weather_data, 1800)
+            logger.debug("Weather data successfully cached.")
+        except Exception as e:
+            logger.error(f"Error writing to weather cache: {e}")
+            
+    return weather_data
+
 
