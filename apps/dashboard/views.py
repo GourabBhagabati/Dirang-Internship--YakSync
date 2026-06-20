@@ -15,6 +15,8 @@ class DashboardView(LoginRequiredMixin, View):
     template_name = 'dashboard/dashboard.html'
     
     def get(self, request):
+        from django.conf import settings
+        
         # Fetch the last communication of any device as the system sync time
         last_device_comm = Device.objects.filter(last_communication__isnull=False).order_by('-last_communication').first()
         last_sync = last_device_comm.last_communication if last_device_comm else None
@@ -37,6 +39,7 @@ class DashboardView(LoginRequiredMixin, View):
             'last_sync': last_sync,
             'weather': weather,
             'animals': Animal.objects.all().order_by('animal_id'),
+            'firebase_config': getattr(settings, 'FIREBASE_CONFIG', None),
         }
         return render(request, self.template_name, context)
 

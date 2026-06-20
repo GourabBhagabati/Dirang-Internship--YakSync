@@ -329,6 +329,9 @@
 {% endblock %}
 
 {% block extra_js %}
+{{ firebase_config|json_script:"firebase-config-data" }}
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -437,7 +440,85 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Firebase real-time integration setup
+    let firebaseUnsubscribe = null;
+    const firebaseConfigData = document.getElementById('firebase-config-data');
+    let firebaseConfig = null;
+    
+    try {
+        if (firebaseConfigData) {
+            firebaseConfig = JSON.parse(firebaseConfigData.textContent);
+        }
+    } catch (e) {
+        console.error("Error parsing firebase configuration:", e);
+    }
+    
+    const isFirebaseConfigured = firebaseConfig && 
+                                firebaseConfig.apiKey && 
+                                !firebaseConfig.apiKey.includes("YOUR_API_KEY");
+
+    let db = null;
+    if (isFirebaseConfigured) {
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            console.log("Firebase Real-time Telemetry Initialized Successfully");
+        } catch (err) {
+            console.error("Firebase Initialization Failed:", err);
+        }
+    }
+
     function fetchTelemetry(animalId = '') {
+        // Cancel existing active Firestore listener if any
+        if (firebaseUnsubscribe) {
+            firebaseUnsubscribe();
+            firebaseUnsubscribe = null;
+        }
+
+        if (db) {
+            console.log(`Subscribing to Firestore telemetry stream. Selected animal: ${animalId || 'All'}`);
+            let query = db.collection('sensor_readings');
+            if (animalId) {
+                // Support query for numeric or string animal identifier values
+                const numericId = parseInt(animalId, 10);
+                query = query.where('animal_id', 'in', [animalId, numericId]);
+            }
+            
+            firebaseUnsubscribe = query.orderBy('timestamp', 'desc').limit(30)
+                .onSnapshot(snapshot => {
+                    const readings = [];
+                    snapshot.forEach(doc => {
+                        readings.push(doc.data());
+                    });
+                    
+                    const sortedReadings = readings.reverse();
+                    
+                    const tempData = sortedReadings
+                        .filter(r => r.sensor_type === 'temperature')
+                        .map(r => ({
+                            timestamp: r.timestamp && r.timestamp.toDate ? formatDate(r.timestamp.toDate()) : r.timestamp_label || '',
+                            value: parseFloat(r.value)
+                        }));
+                        
+                    const moveData = sortedReadings
+                        .filter(r => r.sensor_type === 'movement')
+                        .map(r => ({
+                            timestamp: r.timestamp && r.timestamp.toDate ? formatDate(r.timestamp.toDate()) : r.timestamp_label || '',
+                            value: parseFloat(r.value)
+                        }));
+                        
+                    renderChart(tempData, moveData);
+                }, error => {
+                    console.error("Firestore onSnapshot error, falling back to HTTP REST API:", error);
+                    fetchTelemetryHTTP(animalId);
+                });
+        } else {
+            fetchTelemetryHTTP(animalId);
+        }
+    }
+
+    function fetchTelemetryHTTP(animalId = '') {
+        console.log(`Fetching telemetry data from local HTTP API. Selected animal: ${animalId || 'All'}`);
         const url = animalId ? `/monitoring/api/telemetry/${animalId}/` : '/monitoring/api/telemetry/';
         
         fetch(url)
@@ -457,10 +538,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Load initial global trend
+    function formatDate(date) {
+        const h = String(date.getHours()).padStart(2, '0');
+        const m = String(date.getMinutes()).padStart(2, '0');
+        return `${h}:${m}`;
+    }
+
+    // Load initial telemetry stream
     fetchTelemetry();
 
-    // Reload when selecting a specific animal
+    // Reload stream when selecting a specific animal
     if (animalSelect) {
         animalSelect.addEventListener('change', function() {
             fetchTelemetry(this.value);

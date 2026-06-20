@@ -130,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -161,4 +161,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Weather API settings
 OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY')
 WEATHERAPI_KEY = os.environ.get('WEATHERAPI_KEY')
+
+# Firebase Configuration for Real-time telemetry integrations
+FIREBASE_CONFIG = {
+    'apiKey': "YOUR_API_KEY",
+    'authDomain': "YOUR_PROJECT_ID.firebaseapp.com",
+    'projectId': "YOUR_PROJECT_ID",
+    'storageBucket': "YOUR_PROJECT_ID.appspot.com",
+    'messagingSenderId': "YOUR_SENDER_ID",
+    'appId': "YOUR_APP_ID"
+}
 

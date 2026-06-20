@@ -564,8 +564,20 @@ class GenerateReportPDFView(LoginRequiredMixin, View):
             rel_table.setStyle(TableStyle(rel_t_style))
             story.append(rel_table)
 
+        # Define background watermark callback
+        def draw_background(canvas, document):
+            canvas.saveState()
+            import os
+            from django.conf import settings
+            image_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'YakBackground.png')
+            if os.path.exists(image_path):
+                canvas.setFillAlpha(0.10)
+                canvas.setStrokeAlpha(0.10)
+                canvas.drawImage(image_path, 0, 0, width=A4[0], height=A4[1])
+            canvas.restoreState()
+
         # Build document
-        doc.build(story)
+        doc.build(story, onFirstPage=draw_background, onLaterPages=draw_background)
 
         # Get file contents and send response
         buffer.seek(0)
