@@ -197,7 +197,7 @@ class TelemetryAPITests(TestCase):
             species='Yak',
             breed='Himalayan',
             age=3,
-            gender='male',
+            gender='female',
             weight=Decimal('280.00'),
             health_status='healthy',
             reproductive_status='cycling',

@@ -49,9 +49,75 @@
         </div>
     {% else %}
         <main class="auth-layout">
+            <!-- Background Slideshow -->
+            <div class="auth-bg-slideshow">
+                <div class="auth-bg-slide active" style="background-image: linear-gradient(rgba(228, 255, 203, 0.55), rgba(11, 31, 58, 0.55)), url('{% static 'images/YakBackground.png' %}');"></div>
+                <div class="auth-bg-slide" style="background-image: linear-gradient(rgba(228, 255, 203, 0.55), rgba(11, 31, 58, 0.55)), url('{% static 'images/YakBackgroundV2.jpg' %}');"></div>
+                <div class="auth-bg-slide" style="background-image: linear-gradient(rgba(228, 255, 203, 0.55), rgba(11, 31, 58, 0.55)), url('{% static 'images/YakBackgroundV3.jpg' %}');"></div>
+                <div class="auth-bg-slide" style="background-image: linear-gradient(rgba(228, 255, 203, 0.55), rgba(11, 31, 58, 0.55)), url('{% static 'images/YakBackgroundV4.png' %}');"></div>
+            </div>
+
+            <!-- Manual Swipe Navigation -->
+            <button class="auth-bg-arrow auth-bg-arrow-left" aria-label="Previous Background">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button class="auth-bg-arrow auth-bg-arrow-right" aria-label="Next Background">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
             {% include 'includes/messages.html' %}
             {% block auth_content %}{% endblock %}
         </main>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const slides = document.querySelectorAll('.auth-bg-slide');
+                const leftArrow = document.querySelector('.auth-bg-arrow-left');
+                const rightArrow = document.querySelector('.auth-bg-arrow-right');
+                
+                if (slides.length === 0) return;
+                
+                let currentSlide = 0;
+                let slideInterval;
+                const intervalTime = 7500; // 7.5 seconds
+                
+                function showSlide(index) {
+                    slides[currentSlide].classList.remove('active');
+                    currentSlide = (index + slides.length) % slides.length;
+                    slides[currentSlide].classList.add('active');
+                }
+                
+                function nextSlide() {
+                    showSlide(currentSlide + 1);
+                }
+                
+                function prevSlide() {
+                    showSlide(currentSlide - 1);
+                }
+                
+                function startAutoSwipe() {
+                    clearInterval(slideInterval);
+                    slideInterval = setInterval(nextSlide, intervalTime);
+                }
+                
+                if (leftArrow) {
+                    leftArrow.addEventListener('click', function() {
+                        prevSlide();
+                        startAutoSwipe();
+                    });
+                }
+                
+                if (rightArrow) {
+                    rightArrow.addEventListener('click', function() {
+                        nextSlide();
+                        startAutoSwipe();
+                    });
+                }
+                
+                // Start initial auto-swipe
+                startAutoSwipe();
+            });
+        </script>
     {% endif %}
     
     <script src="{% static 'js/main.js' %}"></script>

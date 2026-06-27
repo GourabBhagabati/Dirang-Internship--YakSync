@@ -36,10 +36,6 @@ class AnimalForm(forms.ModelForm):
                 'required': True,
                 'min': '0',
             }),
-            'gender': forms.Select(attrs={
-                'class': 'form-input',
-                'required': True,
-            }),
             'weight': forms.NumberInput(attrs={
                 'class': 'form-input',
                 'placeholder': 'Weight in kg',
@@ -67,6 +63,11 @@ class AnimalForm(forms.ModelForm):
             'health_status': 'Health Status',
             'reproductive_status': 'Reproductive Status',
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['gender'].initial = 'female'
+        self.fields['gender'].widget = forms.HiddenInput(attrs={'value': 'female'})
     
     def clean_animal_id(self):
         animal_id = self.cleaned_data.get('animal_id')

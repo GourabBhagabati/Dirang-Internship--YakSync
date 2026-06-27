@@ -28,11 +28,6 @@ class AnimalListView(LoginRequiredMixin, ListView):
                 Q(breed__icontains=search_query)
             )
         
-        # Filter by gender
-        gender = self.request.GET.get('gender', '').strip()
-        if gender:
-            queryset = queryset.filter(gender=gender)
-        
         # Filter by health status
         health_status = self.request.GET.get('health_status', '').strip()
         if health_status:
@@ -48,12 +43,10 @@ class AnimalListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['search_query'] = self.request.GET.get('search', '')
-        context['selected_gender'] = self.request.GET.get('gender', '')
         context['selected_health_status'] = self.request.GET.get('health_status', '')
         context['selected_reproductive_status'] = self.request.GET.get('reproductive_status', '')
         
         # Add choices for filters
-        context['gender_choices'] = Animal.GENDER_CHOICES
         context['health_status_choices'] = Animal.HEALTH_STATUS_CHOICES
         context['reproductive_status_choices'] = Animal.REPRODUCTIVE_STATUS_CHOICES
         

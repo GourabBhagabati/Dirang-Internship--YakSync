@@ -543,3 +543,125 @@
     }
 }
 
+/* ICAR Header Card style overrides and dark mode support */
+.icar-header-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2.25rem !important;
+    gap: 2rem;
+    flex-wrap: wrap;
+    background: var(--card-bg) !important;
+    border-radius: 12px !important;
+    margin-bottom: 2rem !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.icar-header-logo-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 75px;
+    width: 75px;
+    flex-shrink: 0;
+}
+
+.icar-header-logo-left img {
+    height: 75px;
+    width: 75px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.icar-header-text {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 280px;
+}
+
+.icar-title-hindi {
+    font-size: 1.625rem;
+    font-weight: 700;
+    color: #059669;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.2px;
+}
+
+.icar-title-english {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e40af;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.5px;
+}
+
+.icar-badge {
+    background-color: #059669;
+    color: white;
+    padding: 0.35rem 1.25rem;
+    border-radius: 20px;
+    font-size: 0.775rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+}
+
+.icar-header-logo-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 75px;
+    width: 75px;
+    flex-shrink: 0;
+}
+
+.icar-header-logo-right img {
+    height: 75px;
+    width: 75px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Dark mode overrides for ICAR text colors to match base theme */
+[data-theme="dark"] .icar-title-hindi {
+    color: #10b981;
+}
+
+[data-theme="dark"] .icar-title-english {
+    color: #60a5fa;
+}
+
+
+[data-theme="dark"] .icar-badge {
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);
+}
+
+@media (max-width: 768px) {
+    .icar-header-card {
+        flex-direction: column !important;
+        text-align: center;
+        padding: 1.5rem !important;
+    }
+    
+    .icar-title-hindi {
+        font-size: 1.35rem;
+    }
+    
+    .icar-title-english {
+        font-size: 1.6rem;
+    }
+}
+
+

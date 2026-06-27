@@ -1068,3 +1068,12 @@ h4 {
 .no-transitions * {
     transition: none !important;
 }
+
+/* Sidebar brand image logo style */
+.sidebar-logo {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+

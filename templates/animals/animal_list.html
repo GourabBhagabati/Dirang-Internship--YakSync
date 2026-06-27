@@ -28,14 +28,6 @@
                     <input type="text" name="search" class="form-input" placeholder="Search by ID, Name, or Breed" value="{{ search_query }}" style="padding-left: 35px;">
                 </div>
                 
-                <div class="filter-group">
-                    <select name="gender" class="form-input">
-                        <option value="">All Genders</option>
-                        {% for value, label in gender_choices %}
-                            <option value="{{ value }}" {% if selected_gender == value %}selected{% endif %}>{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
                 
                 <div class="filter-group">
                     <select name="health_status" class="form-input">
@@ -77,7 +69,6 @@
                         <th>Species</th>
                         <th>Breed</th>
                         <th>Age</th>
-                        <th>Gender</th>
                         <th>Weight</th>
                         <th>Health Status</th>
                         <th>Reproductive Status</th>
@@ -92,9 +83,6 @@
                         <td>{{ animal.species }}</td>
                         <td>{{ animal.breed }}</td>
                         <td>{{ animal.age }} years</td>
-                        <td>
-                            <span class="badge badge-{{ animal.gender }}">{{ animal.get_gender_display }}</span>
-                        </td>
                         <td>{{ animal.weight }} kg</td>
                         <td>
                             <span class="badge badge-{{ animal.health_status }}">{{ animal.get_health_status_display }}</span>
@@ -120,8 +108,8 @@
 <div class="pagination-container">
     <div class="pagination">
         {% if page_obj.has_previous %}
-            <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">« First</a>
-            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">‹ Previous</a>
+            <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">« First</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">‹ Previous</a>
         {% endif %}
         
         <span class="pagination-info">
@@ -129,8 +117,8 @@
         </span>
         
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">Next ›</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_gender %}&gender={{ selected_gender }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">Last »</a>
+            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">Next ›</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_health_status %}&health_status={{ selected_health_status }}{% endif %}{% if selected_reproductive_status %}&reproductive_status={{ selected_reproductive_status }}{% endif %}" class="pagination-btn">Last »</a>
         {% endif %}
     </div>
 </div>
@@ -142,7 +130,7 @@
         <div class="empty-state">
             <div style="font-size: 4rem; margin-bottom: 1rem; color: var(--text-secondary);"><i class="fa-solid fa-cow"></i></div>
             <h3>No Animals Found</h3>
-            <p>{% if search_query or selected_gender or selected_health_status or selected_reproductive_status %}
+            <p>{% if search_query or selected_health_status or selected_reproductive_status %}
                 No animals match your search criteria. Try adjusting your filters.
             {% else %}
                 Start by adding your first animal to the system.
@@ -181,7 +169,7 @@
 
 .filters-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    grid-template-columns: 2fr 1fr 1fr auto;
     gap: 1rem;
     align-items: end;
 }
