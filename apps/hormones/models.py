@@ -49,3 +49,32 @@ class HormoneRelease(models.Model):
     
     def __str__(self):
         return f"{self.reservoir.hormone_type} - {self.quantity} to {self.animal.animal_id}"
+
+
+class HormoneSchedule(models.Model):
+    """Schedules for future hormone releases"""
+    
+    STATUS_CHOICES = [
+        ('scheduled', 'Scheduled'),
+        ('released', 'Released'),
+        ('cancelled', 'Cancelled'),
+    ]
+    
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='hormone_schedules')
+    reservoir = models.ForeignKey(HormoneReservoir, on_delete=models.CASCADE, related_name='schedules')
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    release_date = models.DateField()
+    release_time = models.TimeField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='scheduled')
+    created_at = models.DateTimeField(auto_now_add=True)
+    performed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='hormone_schedules')
+    
+    class Meta:
+        db_table = 'hormone_schedules'
+        ordering = ['release_date', 'release_time']
+        verbose_name = 'Hormone Schedule'
+        verbose_name_plural = 'Hormone Schedules'
+        
+    def __str__(self):
+        return f"{self.reservoir.hormone_type} - {self.quantity} to {self.animal.animal_id} on {self.release_date} at {self.release_time}"
+

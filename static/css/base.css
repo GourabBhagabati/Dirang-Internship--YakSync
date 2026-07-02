@@ -1077,3 +1077,207 @@ h4 {
     object-fit: cover;
 }
 
+/* Site Footer Styles */
+.site-footer {
+    background-color: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 3.5rem 2rem 0 2rem;
+    margin-top: auto; /* Pushes the footer to the bottom of the flex container */
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 4rem;
+    padding-bottom: 3rem;
+}
+
+.footer-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-col-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.footer-col-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 30px;
+    height: 2px;
+    background-color: var(--accent-color);
+    border-radius: 2px;
+}
+
+.footer-logos {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.footer-logo {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 6px;
+    background: #ffffff; /* ensures logos with white background render nicely in both modes */
+    padding: 4px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.footer-logo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.footer-collab-text {
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.footer-collab-text strong {
+    color: var(--text-primary);
+}
+
+.footer-tagline {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+/* Links column */
+.footer-links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links-list li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-links-list a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease, padding-left 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.footer-link-icon {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    transition: transform 0.2s ease;
+}
+
+.footer-links-list a:hover {
+    color: var(--accent-color);
+    padding-left: 4px;
+}
+
+.footer-links-list a:hover .footer-link-icon {
+    transform: translateX(2px);
+}
+
+/* Contact Column */
+.footer-contact-item {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    align-items: flex-start;
+}
+
+.footer-contact-icon {
+    color: var(--accent-color);
+    font-size: 1rem;
+    margin-top: 2px;
+}
+
+.footer-contact-text {
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.footer-contact-text strong {
+    color: var(--text-primary);
+}
+
+/* Footer Bottom Bar */
+.footer-bottom {
+    border-top: 1px solid var(--border-color);
+    padding: 1.5rem 0;
+    margin-top: 1rem;
+}
+
+.footer-bottom-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.8rem;
+}
+
+.text-highlight {
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.footer-copy {
+    color: var(--text-secondary);
+}
+
+.footer-credits {
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+/* Responsiveness */
+@media (max-width: 992px) {
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+    }
+    
+    .footer-col-collab {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        padding-bottom: 2rem;
+    }
+    
+    .footer-col-collab {
+        grid-column: span 1;
+    }
+    
+    .footer-bottom-container {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+

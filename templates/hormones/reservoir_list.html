@@ -1,145 +1,1250 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Hormone Reservoirs - YakSync{% endblock %}
-{% block page_title %}Hormones{% endblock %}
+{% block title %}Hormone Management - YakSync{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium Dashboard Styles */
+    .hormones-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1rem 3rem 1rem;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .dashboard-header {
+        margin-bottom: 2rem;
+        animation: fadeIn 0.6s ease;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    /* Selector Card */
+    .control-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.75rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        transition: var(--transition);
+        animation: slideUp 0.6s ease;
+    }
+
+    .form-group-custom {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 400px;
+    }
+
+    .label-custom {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .select-custom {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        background: var(--bg-color);
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: var(--transition);
+        outline: none;
+    }
+
+    .select-custom:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    /* Reservoir Cards */
+    .reservoir-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .res-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 200px;
+    }
+
+    .res-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border-color: var(--accent-color);
+    }
+
+    .res-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.25rem;
+    }
+
+    .res-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+    }
+
+    .res-hormone {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-top: 0.25rem;
+    }
+
+    .res-badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .badge-normal {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .badge-warning {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+        animation: pulseBadge 2s infinite ease-in-out;
+    }
+
+    .res-level-info {
+        margin-top: auto;
+    }
+
+    .res-level-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.5rem;
+    }
+
+    .res-qty {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .res-unit {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        margin-left: 0.15rem;
+    }
+
+    .res-percentage {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+    }
+
+    .res-percentage.low {
+        color: #f59e0b;
+    }
+
+    .progress-track {
+        height: 8px;
+        background: var(--bg-color);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+
+    .progress-bar {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bg-success { background: #10b981; }
+    .bg-warning { background: #f59e0b; }
+
+    /* Reservoir Selection Radio buttons */
+    .selection-section {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .selection-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .selection-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .radio-label {
+        flex: 1;
+        min-width: 240px;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        background: var(--bg-color);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--text-primary);
+        transition: var(--transition);
+        user-select: none;
+    }
+
+    .radio-label:hover {
+        background: var(--hover-bg);
+        border-color: var(--border-color);
+    }
+
+    .radio-label.selected {
+        background: rgba(59, 130, 246, 0.08);
+        border-color: var(--accent-color);
+    }
+
+    .radio-input {
+        width: 1.15rem;
+        height: 1.15rem;
+        accent-color: var(--accent-color);
+    }
+
+    /* Action Inputs */
+    .dosage-input-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .input-custom {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        color: var(--text-primary);
+        outline: none;
+        transition: var(--transition);
+        width: 100%;
+    }
+
+    .input-custom:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    /* Main Action Buttons Grid */
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .btn-action {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.5rem 1rem;
+        font-size: 1.15rem;
+        font-weight: 700;
+        border-radius: 16px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-align: center;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 12px -2px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-action:active {
+        transform: translateY(0);
+    }
+
+    .btn-action i {
+        font-size: 1.75rem;
+    }
+
+    /* Action colors */
+    .btn-release {
+        background: var(--secondary-color);
+        color: white;
+    }
+    .btn-release:hover {
+        background: #1e3a8a;
+    }
+
+    .btn-schedule {
+        background: #0f766e;
+        color: white;
+    }
+    .btn-schedule:hover {
+        background: #115e59;
+    }
+
+    .btn-cancel {
+        background: #475569;
+        color: white;
+    }
+    .btn-cancel:hover {
+        background: #334155;
+    }
+
+    .btn-stop {
+        background: var(--danger-color);
+        color: white;
+    }
+    .btn-stop:hover {
+        background: #dc2626;
+        animation: shake 0.5s ease-in-out infinite alternate;
+    }
+
+    .btn-action:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+        animation: none !important;
+    }
+
+    /* History & Table Styles */
+    .history-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.75rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        animation: slideUp 0.8s ease;
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+    }
+
+    .history-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .history-table-container {
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+    }
+
+    .history-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .history-table th {
+        background: var(--bg-color);
+        color: var(--text-primary);
+        font-weight: 600;
+        padding: 1rem;
+        font-size: 0.875rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .history-table td {
+        padding: 1rem;
+        font-size: 0.925rem;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .history-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .history-table tbody tr:hover {
+        background: var(--hover-bg);
+    }
+
+    /* Modal / Dialog */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(4px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        width: 100%;
+        max-width: 500px;
+        padding: 2rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+        position: relative;
+        animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: var(--transition);
+    }
+
+    .modal-close:hover {
+        color: var(--text-primary);
+    }
+
+    .schedule-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 0.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .schedule-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.85rem 1rem;
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        transition: var(--transition);
+    }
+
+    .schedule-item:hover {
+        border-color: var(--accent-color);
+    }
+
+    .schedule-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .schedule-hormone-type {
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .schedule-datetime {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .btn-cancel-item {
+        padding: 0.4rem 0.8rem;
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .btn-cancel-item:hover {
+        background: #dc2626;
+    }
+
+    .empty-schedules {
+        text-align: center;
+        padding: 2rem 0;
+        color: var(--text-secondary);
+    }
+
+    /* Confirmation Dialog */
+    .confirm-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-modal {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: var(--transition);
+    }
+
+    .btn-modal-cancel {
+        background: #475569;
+        color: white;
+    }
+
+    .btn-modal-confirm {
+        background: #ef4444;
+        color: white;
+    }
+
+    /* Toast Container & Notification */
+    .toast-container {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        z-index: 1100;
+        pointer-events: none;
+    }
+
+    .toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-weight: 600;
+        min-width: 300px;
+        animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        border-left: 4px solid var(--accent-color);
+        transition: all 0.3s ease;
+    }
+
+    .toast.success {
+        border-left-color: #10b981;
+    }
+
+    .toast.error {
+        border-left-color: #ef4444;
+    }
+
+    .toast.info {
+        border-left-color: #3b82f6;
+    }
+
+    .toast-icon {
+        font-size: 1.25rem;
+    }
+
+    .toast.success .toast-icon { color: #10b981; }
+    .toast.error .toast-icon { color: #ef4444; }
+    .toast.info .toast-icon { color: #3b82f6; }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(100%); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pulseBadge {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateY(-2px) rotate(0deg); }
+        25% { transform: translateY(-2px) rotate(0.75deg); }
+        75% { transform: translateY(-2px) rotate(-0.75deg); }
+    }
+
+    /* Responsiveness */
+    @media (max-width: 768px) {
+        .actions-grid {
+            grid-template-columns: 1fr;
+        }
+        .dosage-input-section {
+            grid-template-columns: 1fr;
+        }
+        .toast-container {
+            bottom: 1rem;
+            right: 1rem;
+            left: 1rem;
+        }
+        .toast {
+            min-width: auto;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="page-header-content">
-        <h2 class="page-title">Hormone Reservoirs</h2>
-        <p class="page-subtitle">Manage hormone inventory and low-stock status</p>
-    </div>
-    <div class="page-actions">
-        <a href="{% url 'hormones:release_list' %}" class="btn btn-secondary">Release History</a>
-        <a href="{% url 'hormones:reservoir_create' %}" class="btn btn-primary">Add Reservoir</a>
+{% verbatim %}
+<div id="hormone-management-app">
+    <!-- React will mount here -->
+    <div style="display:flex; justify-content:center; align-items:center; min-height:400px; color:var(--text-secondary); font-size:1.15rem; font-weight:500;">
+        <i class="fa-solid fa-circle-notch fa-spin" style="margin-right:0.5rem; font-size:1.5rem; color:var(--accent-color);"></i> Loading Hormone Management System...
     </div>
 </div>
+{% endverbatim %}
+{% endblock %}
 
-<div class="card">
-    <div class="card-body" style="padding: 1.5rem;">
-        <form method="get" class="filters-form">
-            <div class="filters-row">
-                <div class="filter-group">
-                    <input type="text" name="search" class="form-input" placeholder="Search by hormone type" value="{{ search_query }}">
+{% block extra_js %}
+<!-- React 18, ReactDOM 18 & Babel via CDN -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+{% verbatim %}
+<script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // CSRF Helper for Django POST requests
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function HormoneApp() {
+        const [animals, setAnimals] = useState([]);
+        const [selectedAnimal, setSelectedAnimal] = useState('');
+        const [reservoirs, setReservoirs] = useState([]);
+        const [selectedReservoir, setSelectedReservoir] = useState('');
+        
+        // Input fields
+        const [dosage, setDosage] = useState('');
+        const [releaseDate, setReleaseDate] = useState('');
+        const [releaseTime, setReleaseTime] = useState('');
+        
+        // History & Schedules
+        const [history, setHistory] = useState([]);
+        const [schedules, setSchedules] = useState([]);
+        
+        // UI Control States
+        const [isScheduleOpen, setIsScheduleOpen] = useState(false);
+        const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+        const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
+        const [toasts, setToasts] = useState([]);
+        const [loading, setLoading] = useState(false);
+
+        // Fetch initialization data
+        useEffect(() => {
+            fetchAnimals();
+            fetchReservoirs();
+            fetchHistory();
+        }, []);
+
+        // Refetch animal specific data on select
+        useEffect(() => {
+            if (selectedAnimal) {
+                fetchHistory(selectedAnimal);
+                fetchSchedules(selectedAnimal);
+            } else {
+                fetchHistory();
+                setSchedules([]);
+            }
+        }, [selectedAnimal]);
+
+        const showToast = (message, type = 'success') => {
+            const id = Date.now();
+            setToasts(prev => [...prev, { id, message, type }]);
+            setTimeout(() => {
+                setToasts(prev => prev.filter(t => t.id !== id));
+            }, 3500);
+        };
+
+        const fetchAnimals = async () => {
+            try {
+                const res = await fetch('/hormones/api/animals/');
+                const data = await res.json();
+                if (data.animals) {
+                    setAnimals(data.animals);
+                    // Select first animal automatically if available
+                    if (data.animals.length > 0) {
+                        setSelectedAnimal(data.animals[0].id);
+                    }
+                }
+            } catch (err) {
+                showToast('Failed to fetch animals', 'error');
+            }
+        };
+
+        const fetchReservoirs = async () => {
+            try {
+                const res = await fetch('/hormones/api/reservoirs/');
+                const data = await res.json();
+                if (data.reservoirs) {
+                    setReservoirs(data.reservoirs);
+                    // Select first reservoir automatically
+                    if (data.reservoirs.length > 0) {
+                        setSelectedReservoir(data.reservoirs[0].id);
+                    }
+                }
+            } catch (err) {
+                showToast('Failed to fetch reservoirs', 'error');
+            }
+        };
+
+        const fetchHistory = async (animalId = '') => {
+            try {
+                const url = animalId ? `/hormones/api/history/?animal_id=${animalId}` : '/hormones/api/history/';
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.history) setHistory(data.history);
+            } catch (err) {
+                showToast('Failed to fetch release history', 'error');
+            }
+        };
+
+        const fetchSchedules = async (animalId) => {
+            if (!animalId) return;
+            try {
+                const res = await fetch(`/hormones/api/schedules/?animal_id=${animalId}`);
+                const data = await res.json();
+                if (data.schedules) setSchedules(data.schedules);
+            } catch (err) {
+                showToast('Failed to fetch schedules', 'error');
+            }
+        };
+
+        const handleRelease = async () => {
+            if (!selectedAnimal || !selectedReservoir || !dosage) {
+                showToast('Please select animal, reservoir, and enter dosage', 'error');
+                return;
+            }
+            if (parseFloat(dosage) <= 0) {
+                showToast('Dosage must be greater than zero', 'error');
+                return;
+            }
+
+            setLoading(true);
+            try {
+                const response = await fetch('/hormones/api/release/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        animal_id: selectedAnimal,
+                        reservoir_id: selectedReservoir,
+                        quantity: dosage
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    showToast(data.message || 'Release command sent successfully');
+                    setDosage('');
+                    // Refresh data
+                    fetchReservoirs();
+                    fetchHistory(selectedAnimal);
+                } else {
+                    showToast(data.error || 'Failed to release hormone', 'error');
+                }
+            } catch (err) {
+                showToast('Network error, release failed', 'error');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const handleSchedule = async () => {
+            if (!selectedAnimal || !selectedReservoir || !dosage || !releaseDate || !releaseTime) {
+                showToast('Please select animal, reservoir, dosage, date, and time', 'error');
+                return;
+            }
+            if (parseFloat(dosage) <= 0) {
+                showToast('Dosage must be greater than zero', 'error');
+                return;
+            }
+
+            setLoading(true);
+            try {
+                const response = await fetch('/hormones/api/schedule/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        animal_id: selectedAnimal,
+                        reservoir_id: selectedReservoir,
+                        quantity: dosage,
+                        release_date: releaseDate,
+                        release_time: releaseTime
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showToast(data.message || 'Schedule created successfully');
+                    setDosage('');
+                    setReleaseDate('');
+                    setReleaseTime('');
+                    setIsScheduleOpen(false);
+                    // Refresh schedules
+                    fetchSchedules(selectedAnimal);
+                } else {
+                    showToast(data.error || 'Failed to schedule release', 'error');
+                }
+            } catch (err) {
+                showToast('Network error, scheduling failed', 'error');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const handleCancelSchedule = async (scheduleId) => {
+            try {
+                const response = await fetch('/hormones/api/schedule/cancel/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ schedule_id: scheduleId })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showToast(data.message || 'Schedule cancelled successfully');
+                    // Refresh schedules
+                    fetchSchedules(selectedAnimal);
+                } else {
+                    showToast(data.error || 'Failed to cancel schedule', 'error');
+                }
+            } catch (err) {
+                showToast('Network error, cancellation failed', 'error');
+            }
+        };
+
+        const handleEmergencyStop = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch('/hormones/api/emergency-stop/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ animal_id: selectedAnimal })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showToast(data.message || 'Emergency stop activated', 'info');
+                    setIsEmergencyModalOpen(false);
+                    // Refresh schedules
+                    fetchSchedules(selectedAnimal);
+                } else {
+                    showToast(data.error || 'Emergency stop failed', 'error');
+                }
+            } catch (err) {
+                showToast('Network error, action failed', 'error');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const currentSelectedAnimalObj = animals.find(a => String(a.id) === String(selectedAnimal));
+
+        return (
+            <div className="hormones-container">
+                {/* Header */}
+                <div className="dashboard-header">
+                    <h2 className="dashboard-title">Hormone Management</h2>
+                    <p className="dashboard-subtitle">Control hormone reservoirs, schedule releases, and monitor delivery history.</p>
                 </div>
 
-                <label class="checkbox-filter">
-                    <input type="checkbox" name="low_stock" {% if low_stock %}checked{% endif %}>
-                    <span>Low stock only</span>
-                </label>
+                {/* Target Animal dropdown */}
+                <div className="control-card">
+                    <div className="form-group-custom">
+                        <label className="label-custom" htmlFor="target-animal-select">Target Animal</label>
+                        <select
+                            id="target-animal-select"
+                            className="select-custom"
+                            value={selectedAnimal}
+                            onChange={(e) => setSelectedAnimal(e.target.value)}
+                        >
+                            <option value="">Select target animal</option>
+                            {animals.map(animal => (
+                                <option key={animal.id} value={animal.id}>
+                                    {animal.animal_id} ({animal.name}) - {animal.reproductive_status}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
 
-                <div class="filter-actions">
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                    <a href="{% url 'hormones:reservoir_list' %}" class="btn btn-secondary">Clear</a>
+                {/* Reservoir Cards */}
+                <div className="reservoir-grid">
+                    {reservoirs.map(res => (
+                        <div key={res.id} className="res-card">
+                            <div className="res-card-header">
+                                <div>
+                                    <div className="res-label">{res.label}</div>
+                                    <div className="res-hormone">{res.hormone_type}</div>
+                                </div>
+                                <span className={`res-badge ${res.is_low ? 'badge-warning' : 'badge-normal'}`}>
+                                    {res.is_low ? (
+                                        <React.Fragment>
+                                            <i className="fa-solid fa-triangle-exclamation"></i> Low Stock
+                                        </React.Fragment>
+                                    ) : (
+                                        <React.Fragment>
+                                            <i className="fa-solid fa-circle-check"></i> Normal
+                                        </React.Fragment>
+                                    )}
+                                </span>
+                            </div>
+                            <div className="res-level-info">
+                                <div className="res-level-row">
+                                    <div>
+                                        <span className="res-qty">{res.current_quantity}</span>
+                                        <span className="res-unit">{res.unit}</span>
+                                    </div>
+                                    <span className={`res-percentage ${res.is_low ? 'low' : ''}`}>{res.fill_percentage}%</span>
+                                </div>
+                                <div className="progress-track">
+                                    <div 
+                                        className={`progress-bar ${res.is_low ? 'bg-warning' : 'bg-success'}`}
+                                        style={{ width: `${res.fill_percentage}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Reservoir Selection (Radio Buttons) */}
+                <div className="selection-section">
+                    <div className="selection-title">Select Reservoir for Operation</div>
+                    <div className="selection-grid">
+                        {reservoirs.map(res => (
+                            <label 
+                                key={res.id} 
+                                className={`radio-label ${String(selectedReservoir) === String(res.id) ? 'selected' : ''}`}
+                            >
+                                <input
+                                    type="radio"
+                                    name="reservoir-select"
+                                    className="radio-input"
+                                    value={res.id}
+                                    checked={String(selectedReservoir) === String(res.id)}
+                                    onChange={(e) => setSelectedReservoir(e.target.value)}
+                                />
+                                <span>Select {res.label} for Release ({res.hormone_type})</span>
+                            </label>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Action parameters inputs */}
+                <div className="control-card">
+                    <div className="selection-title" style={{marginBottom: '1rem'}}>Operation Parameters</div>
+                    <div className="dosage-input-section">
+                        <div className="form-group-custom" style={{maxWidth: 'none'}}>
+                            <label className="label-custom" htmlFor="dosage-input">Dosage/Quantity</label>
+                            <input 
+                                id="dosage-input"
+                                type="number" 
+                                className="input-custom" 
+                                placeholder="Enter dosage quantity (e.g. 5.0)" 
+                                value={dosage}
+                                onChange={(e) => setDosage(e.target.value)}
+                                min="0.01"
+                                step="0.01"
+                            />
+                        </div>
+                        {isScheduleOpen && (
+                            <React.Fragment>
+                                <div className="form-group-custom" style={{maxWidth: 'none'}}>
+                                    <label className="label-custom" htmlFor="schedule-date-input">Schedule Date</label>
+                                    <input 
+                                        id="schedule-date-input"
+                                        type="date" 
+                                        className="input-custom"
+                                        value={releaseDate}
+                                        onChange={(e) => setReleaseDate(e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group-custom" style={{maxWidth: 'none'}}>
+                                    <label className="label-custom" htmlFor="schedule-time-input">Schedule Time</label>
+                                    <input 
+                                        id="schedule-time-input"
+                                        type="time" 
+                                        className="input-custom"
+                                        value={releaseTime}
+                                        onChange={(e) => setReleaseTime(e.target.value)}
+                                    />
+                                </div>
+                            </React.Fragment>
+                        )}
+                    </div>
+                    {isScheduleOpen && (
+                        <div style={{display: 'flex', gap: '0.75rem', marginTop: '0.5rem'}}>
+                            <button className="btn-modal btn-modal-confirm" style={{background: '#0f766e'}} onClick={handleSchedule} disabled={loading}>
+                                <i className="fa-solid fa-calendar-check" style={{marginRight: '0.5rem'}}></i> Confirm Schedule
+                            </button>
+                            <button className="btn-modal btn-modal-cancel" onClick={() => setIsScheduleOpen(false)}>Cancel</button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Main Action Buttons Grid */}
+                <div className="actions-grid">
+                    <button className="btn-action btn-release" onClick={handleRelease} disabled={loading || !selectedAnimal || isScheduleOpen}>
+                        <i className="fa-solid fa-syringe"></i>
+                        <span>Release Hormone</span>
+                    </button>
+                    <button className="btn-action btn-schedule" onClick={() => setIsScheduleOpen(true)} disabled={loading || !selectedAnimal || isScheduleOpen}>
+                        <i className="fa-solid fa-calendar-plus"></i>
+                        <span>Schedule Hormone</span>
+                    </button>
+                    <button className="btn-action btn-cancel" onClick={() => setIsCancelModalOpen(true)} disabled={loading || !selectedAnimal}>
+                        <i className="fa-solid fa-calendar-xmark"></i>
+                        <span>Cancel Schedule</span>
+                    </button>
+                    <button className="btn-action btn-stop" onClick={() => setIsEmergencyModalOpen(true)} disabled={loading || !selectedAnimal}>
+                        <i className="fa-solid fa-circle-stop"></i>
+                        <span>Emergency Stop</span>
+                    </button>
+                </div>
+
+                {/* Release History Section */}
+                <div className="history-card">
+                    <div className="history-header">
+                        <h3 className="history-title">
+                            {currentSelectedAnimalObj ? `Release History for ${currentSelectedAnimalObj.animal_id} (${currentSelectedAnimalObj.name})` : 'Recent Release History'}
+                        </h3>
+                    </div>
+                    <div className="history-table-container">
+                        {history.length > 0 ? (
+                            <table className="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Animal ID</th>
+                                        <th>Hormone Type</th>
+                                        <th>Quantity</th>
+                                        <th>Timestamp</th>
+                                        <th>Performed By</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {history.map(row => (
+                                        <tr key={row.id}>
+                                            <td><strong>{row.animal_id}</strong></td>
+                                            <td>{row.hormone_type}</td>
+                                            <td>{row.quantity} {row.unit}</td>
+                                            <td>{new Date(row.timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</td>
+                                            <td>{row.performed_by}</td>
+                                            <td>{row.notes}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <div style={{padding: '2.5rem 1.5rem', textAlign: 'center', color: 'var(--text-secondary)'}}>
+                                <i className="fa-solid fa-clipboard-question" style={{fontSize: '2rem', marginBottom: '0.75rem', color: 'var(--text-secondary)', opacity: 0.6}}></i>
+                                <div>No reproductive hormone releases logged for this animal.</div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Cancel Schedule Dialog Modal */}
+                {isCancelModalOpen && (
+                    <div className="modal-overlay" onClick={() => setIsCancelModalOpen(false)}>
+                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                            <div className="modal-header">
+                                <h3 className="modal-title">Scheduled Hormone Releases</h3>
+                                <button className="modal-close" onClick={() => setIsCancelModalOpen(false)}>
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div className="schedule-list">
+                                {schedules.length > 0 ? (
+                                    schedules.map(item => (
+                                        <div key={item.id} className="schedule-item">
+                                            <div className="schedule-info">
+                                                <span className="schedule-hormone-type">{item.hormone_type} ({item.quantity} {item.unit})</span>
+                                                <span className="schedule-datetime">
+                                                    <i className="fa-regular fa-calendar" style={{marginRight: '0.25rem'}}></i>
+                                                    {item.release_date} &nbsp; 
+                                                    <i className="fa-regular fa-clock" style={{marginRight: '0.25rem'}}></i>
+                                                    {item.release_time}
+                                                </span>
+                                            </div>
+                                            <button 
+                                                className="btn-cancel-item"
+                                                onClick={() => {
+                                                    handleCancelSchedule(item.id);
+                                                }}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="empty-schedules">
+                                        <i className="fa-solid fa-calendar-days" style={{fontSize: '2.5rem', marginBottom: '0.75rem', opacity: 0.4}}></i>
+                                        <p>No active scheduled releases found.</p>
+                                    </div>
+                                )}
+                            </div>
+                            <div style={{textAlign: 'right'}}>
+                                <button className="btn-modal btn-modal-cancel" onClick={() => setIsCancelModalOpen(false)}>Close</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Emergency Stop Confirmation Modal */}
+                {isEmergencyModalOpen && (
+                    <div className="modal-overlay" onClick={() => setIsEmergencyModalOpen(false)}>
+                        <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{borderTop: '5px solid var(--danger-color)'}}>
+                            <div className="modal-header">
+                                <h3 className="modal-title" style={{color: 'var(--danger-color)', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                                    <i className="fa-solid fa-triangle-exclamation"></i> Emergency Stop Confirmation
+                                </h3>
+                                <button className="modal-close" onClick={() => setIsEmergencyModalOpen(false)}>
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div>
+                                <p style={{lineHeight: 1.6, color: 'var(--text-primary)'}}>
+                                    Are you absolutely sure you want to activate the <strong>Emergency Stop</strong> for animal <strong>{currentSelectedAnimalObj?.animal_id}</strong>?
+                                </p>
+                                <p style={{marginTop: '0.75rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5}}>
+                                    This action will instantly cancel all scheduled hormone releases for this animal and raise a system critical alert.
+                                </p>
+                            </div>
+                            <div className="confirm-footer">
+                                <button className="btn-modal btn-modal-cancel" onClick={() => setIsEmergencyModalOpen(false)}>No, Back</button>
+                                <button className="btn-modal btn-modal-confirm" onClick={handleEmergencyStop} disabled={loading}>
+                                    {loading ? 'Processing...' : 'Yes, Emergency Stop'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Toast Notification Area */}
+                <div className="toast-container">
+                    {toasts.map(t => (
+                        <div key={t.id} className={`toast ${t.type}`}>
+                            <span className="toast-icon">
+                                {t.type === 'success' && <i className="fa-solid fa-circle-check"></i>}
+                                {t.type === 'error' && <i className="fa-solid fa-circle-xmark"></i>}
+                                {t.type === 'info' && <i className="fa-solid fa-circle-info"></i>}
+                            </span>
+                            <span>{t.message}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
-        </form>
-    </div>
-</div>
+        );
+    }
 
-{% if reservoirs %}
-<div class="card">
-    <div class="card-body" style="padding: 0;">
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Hormone Type</th>
-                        <th>Initial Quantity</th>
-                        <th>Current Quantity</th>
-                        <th>Unit</th>
-                        <th>Low Threshold</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for reservoir in reservoirs %}
-                    <tr class="{% if reservoir.is_low %}row-warning{% endif %}">
-                        <td><strong>{{ reservoir.hormone_type }}</strong></td>
-                        <td>{{ reservoir.initial_quantity }}</td>
-                        <td>{{ reservoir.current_quantity }}</td>
-                        <td>{{ reservoir.unit }}</td>
-                        <td>{{ reservoir.low_threshold }}</td>
-                        <td>
-                            {% if reservoir.is_low %}
-                                <span class="badge badge-low">Low Stock</span>
-                            {% else %}
-                                <span class="badge badge-normal">Normal</span>
-                            {% endif %}
-                        </td>
-                        <td class="actions-cell">
-                            <a href="{% url 'hormones:reservoir_detail' reservoir.pk %}" class="btn-icon" title="View Details">View</a>
-                            <a href="{% url 'hormones:reservoir_edit' reservoir.pk %}" class="btn-icon" title="Edit">Edit</a>
-                            <a href="{% url 'hormones:reservoir_delete' reservoir.pk %}" class="btn-icon btn-icon-danger" title="Delete">Delete</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-{% if is_paginated %}
-<div class="pagination-container">
-    <div class="pagination">
-        {% if page_obj.has_previous %}
-            <a href="?page=1{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">First</a>
-            <a href="?page={{ page_obj.previous_page_number }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">Previous</a>
-        {% endif %}
-        <span class="pagination-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">Next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}{% if query_params %}&{{ query_params }}{% endif %}" class="pagination-btn">Last</a>
-        {% endif %}
-    </div>
-</div>
-{% endif %}
-{% else %}
-<div class="card">
-    <div class="card-body">
-        <div class="empty-state">
-            <h3>No Reservoirs Found</h3>
-            <p>{% if search_query or low_stock %}No reservoirs match your search criteria.{% else %}Start by adding the first hormone reservoir.{% endif %}</p>
-            <a href="{% url 'hormones:reservoir_create' %}" class="btn btn-primary" style="margin-top: 1rem;">Add First Reservoir</a>
-        </div>
-    </div>
-</div>
-{% endif %}
-
-<style>
-.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-.page-title { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; }
-.page-subtitle { color: var(--text-secondary); font-size: 1rem; }
-.page-actions, .filter-actions, .actions-cell { display: flex; gap: 0.5rem; }
-.filters-row { display: grid; grid-template-columns: 2fr auto auto; gap: 1rem; align-items: end; }
-.form-input { padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; transition: var(--transition); width: 100%; }
-.form-input:focus { outline: none; border-color: var(--secondary-color); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
-.checkbox-filter { min-height: 44px; display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-primary); font-weight: 600; white-space: nowrap; }
-.table-responsive { overflow-x: auto; }
-.data-table { width: 100%; border-collapse: collapse; }
-.data-table thead { background: var(--bg-color); }
-.data-table th { padding: 1rem; text-align: left; font-weight: 600; color: var(--text-primary); border-bottom: 2px solid var(--border-color); white-space: nowrap; }
-.data-table td { padding: 1rem; border-bottom: 1px solid var(--border-color); }
-.data-table tbody tr:hover { background: var(--bg-color); }
-.row-warning { background: #fffaf0; }
-.badge { padding: 0.375rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
-.badge-normal { background: #e8f5e9; color: #388e3c; }
-.badge-low { background: #fff3e0; color: #f57c00; }
-.btn-icon { padding: 0.5rem 0.75rem; border-radius: 6px; background: var(--bg-color); color: var(--text-primary); text-decoration: none; transition: var(--transition); white-space: nowrap; }
-.btn-icon:hover { background: var(--secondary-color); color: white; transform: translateY(-2px); }
-.btn-icon-danger:hover { background: var(--danger-color); }
-.pagination-container { display: flex; justify-content: center; margin-top: 2rem; }
-.pagination { display: flex; gap: 0.5rem; align-items: center; }
-.pagination-btn { padding: 0.5rem 1rem; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-primary); text-decoration: none; transition: var(--transition); }
-.pagination-btn:hover { background: var(--secondary-color); color: white; border-color: var(--secondary-color); }
-.pagination-info { padding: 0.5rem 1rem; color: var(--text-secondary); }
-@media (max-width: 768px) {
-    .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-    .page-actions, .filter-actions { flex-direction: column; width: 100%; }
-    .filters-row { grid-template-columns: 1fr; }
-}
-</style>
+    const container = document.getElementById('hormone-management-app');
+    const root = ReactDOM.createRoot(container);
+    root.render(<HormoneApp />);
+</script>
+{% endverbatim %}
 {% endblock %}

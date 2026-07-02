@@ -1,0 +1,70 @@
+{% load static %}
+<footer class="site-footer">
+    <div class="footer-container">
+        <!-- Collaboration & Branding Column -->
+        <div class="footer-col footer-col-collab">
+            <div class="footer-logos">
+                <img src="{% static 'images/ADBULogo.jpg' %}" alt="ADBU Logo" class="footer-logo adbu-logo">
+                <img src="{% static 'images/YakLogoV2.jpg' %}" alt="ICAR-NRCY Logo" class="footer-logo yak-logo">
+            </div>
+            <h3 class="footer-col-title">Joint Initiative</h3>
+            <p class="footer-collab-text">
+                <strong>Assam Don Bosco University</strong> in collaboration with 
+                <strong>ICAR-National Research Centre on Yak</strong>.
+            </p>
+            <p class="footer-tagline">
+                Smart IoT Platform for Livestock Reproductive Management (YakSync)
+            </p>
+        </div>
+
+        <!-- Quick Links Column -->
+        <div class="footer-col footer-col-links">
+            <h3 class="footer-col-title">Quick Navigation</h3>
+            <ul class="footer-links-list">
+                <li><a href="{% url 'dashboard:index' %}"><i class="fa-solid fa-chevron-right footer-link-icon"></i> Dashboard</a></li>
+                <li><a href="{% url 'animals:list' %}"><i class="fa-solid fa-chevron-right footer-link-icon"></i> Animals Directory</a></li>
+                <li><a href="{% url 'devices:list' %}"><i class="fa-solid fa-chevron-right footer-link-icon"></i> IoT Devices</a></li>
+                <li><a href="{% url 'protocols:list' %}"><i class="fa-solid fa-chevron-right footer-link-icon"></i> Protocols</a></li>
+                <li><a href="{% url 'alerts:dashboard' %}"><i class="fa-solid fa-chevron-right footer-link-icon"></i> System Alerts</a></li>
+                <li><a href="{% url 'reports:dashboard' %}"><i class="fa-solid fa-chevron-right footer-link-icon"></i> Export Reports</a></li>
+            </ul>
+        </div>
+
+        <!-- Contact Info Column -->
+        <div class="footer-col footer-col-contact">
+            <h3 class="footer-col-title">Collaborators Info</h3>
+            <div class="footer-contact-item">
+                <div class="footer-contact-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div class="footer-contact-text">
+                    <strong>ICAR-NRC on Yak</strong><br>
+                    Dirang, West Kameng District,<br>
+                    Arunachal Pradesh - 790101
+                </div>
+            </div>
+            <div class="footer-contact-item">
+                <div class="footer-contact-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div class="footer-contact-text">
+                    <strong>Assam Don Bosco University</strong><br>
+                    Tapesia Gardens, Kamarkuchi,<br>
+                    Guwahati, Assam - 782402
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Copyright Bar -->
+    <div class="footer-bottom">
+        <div class="footer-bottom-container">
+            <p class="footer-copy">
+                &copy; 2026 <span class="text-highlight">YakSync</span>. All rights reserved.
+            </p>
+            <p class="footer-credits">
+                Designed & developed for livestock reproductive management and IoT synchronization.
+            </p>
+        </div>
+    </div>
+</footer>

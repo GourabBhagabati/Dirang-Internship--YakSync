@@ -264,3 +264,138 @@ class HormoneModuleTests(TestCase):
         self.assertTemplateUsed(response, 'hormones/release_detail.html')
         self.assertContains(response, 'Release Information')
         self.assertContains(response, 'Progesterone')
+
+
+class HormoneAPITests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='api_user',
+            password='StrongPass123'
+        )
+        self.animal = Animal.objects.create(
+            animal_id='YAK-API-01',
+            name='Sonam',
+            species='Yak',
+            breed='Himalayan',
+            age=3,
+            gender='female',
+            weight=Decimal('280.00'),
+            health_status='healthy',
+            reproductive_status='cycling',
+            created_by=self.user,
+        )
+        self.reservoir = HormoneReservoir.objects.create(
+            hormone_type='Progesterone',
+            initial_quantity=Decimal('100.00'),
+            current_quantity=Decimal('80.00'),
+            unit='ml',
+            low_threshold=Decimal('20.00'),
+        )
+
+    def login(self):
+        self.client.login(username='api_user', password='StrongPass123')
+
+    def test_api_fetch_animals(self):
+        self.login()
+        response = self.client.get(reverse('hormones:api_fetch_animals'))
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('animals', data)
+        self.assertTrue(any(a['animal_id'] == 'YAK-API-01' for a in data['animals']))
+
+    def test_api_fetch_reservoirs(self):
+        self.login()
+        response = self.client.get(reverse('hormones:api_fetch_reservoirs'))
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('reservoirs', data)
+        self.assertEqual(data['reservoirs'][0]['hormone_type'], 'Progesterone')
+        self.assertEqual(data['reservoirs'][0]['fill_percentage'], 80.0)
+
+    def test_api_release_hormone(self):
+        self.login()
+        response = self.client.post(
+            reverse('hormones:api_release_hormone'),
+            data={'animal_id': self.animal.id, 'reservoir_id': self.reservoir.id, 'quantity': '10.00'},
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data['message'], 'Release command sent successfully')
+        
+        # Verify reservoir was updated
+        self.reservoir.refresh_from_db()
+        self.assertEqual(self.reservoir.current_quantity, Decimal('70.00'))
+
+    def test_api_release_hormone_insufficient_inventory(self):
+        self.login()
+        response = self.client.post(
+            reverse('hormones:api_release_hormone'),
+            data={'animal_id': self.animal.id, 'reservoir_id': self.reservoir.id, 'quantity': '90.00'},
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.json())
+        self.reservoir.refresh_from_db()
+        self.assertEqual(self.reservoir.current_quantity, Decimal('80.00'))
+
+    def test_api_schedule_cancel_and_emergency_stop(self):
+        self.login()
+        
+        # 1. Test Schedule
+        response = self.client.post(
+            reverse('hormones:api_schedule_hormone'),
+            data={
+                'animal_id': self.animal.id,
+                'reservoir_id': self.reservoir.id,
+                'quantity': '5.00',
+                'release_date': '2026-08-01',
+                'release_time': '12:00:00'
+            },
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['message'], 'Schedule created successfully')
+        
+        # 2. Test Fetch Schedules
+        response = self.client.get(reverse('hormones:api_fetch_schedules'), {'animal_id': self.animal.id})
+        self.assertEqual(response.status_code, 200)
+        schedules = response.json()['schedules']
+        self.assertEqual(len(schedules), 1)
+        schedule_id = schedules[0]['id']
+        
+        # 3. Test Cancel Schedule
+        response = self.client.post(
+            reverse('hormones:api_cancel_schedule'),
+            data={'schedule_id': schedule_id},
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['message'], 'Schedule cancelled successfully')
+
+        # 4. Schedule another for Emergency Stop test
+        self.client.post(
+            reverse('hormones:api_schedule_hormone'),
+            data={
+                'animal_id': self.animal.id,
+                'reservoir_id': self.reservoir.id,
+                'quantity': '2.00',
+                'release_date': '2026-08-02',
+                'release_time': '08:00:00'
+            },
+            content_type='application/json'
+        )
+        
+        # 5. Test Emergency Stop
+        response = self.client.post(
+            reverse('hormones:api_emergency_stop'),
+            data={'animal_id': self.animal.id},
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['cancelled_count'], 1)
+        
+        # 6. Test history
+        response = self.client.get(reverse('hormones:api_release_history'), {'animal_id': self.animal.id})
+        self.assertEqual(response.status_code, 200)
+

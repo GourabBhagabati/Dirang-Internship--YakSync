@@ -45,6 +45,7 @@
                     {% include 'includes/messages.html' %}
                     {% block content %}{% endblock %}
                 </main>
+                {% include 'includes/footer.html' %}
             </div>
         </div>
     {% else %}
@@ -52,8 +53,8 @@
             <!-- Background Slideshow -->
             <div class="auth-bg-slideshow">
                 <div class="auth-bg-slide active" style="background-image: linear-gradient(rgba(228, 255, 203, 0.55), rgba(11, 31, 58, 0.55)), url('{% static 'images/YakBackground.png' %}');"></div>
-                <div class="auth-bg-slide" style="background-image: linear-gradient(rgba(228, 255, 203, 0.55), rgba(11, 31, 58, 0.55)), url('{% static 'images/YakBackgroundV2.jpg' %}');"></div>
-                <div class="auth-bg-slide" style="background-image: linear-gradient(rgba(228, 255, 203, 0.55), rgba(11, 31, 58, 0.55)), url('{% static 'images/YakBackgroundV3.jpg' %}');"></div>
+                <!-- <div class="auth-bg-slide" style="background-image: linear-gradient(rgba(228, 255, 203, 0.55), rgba(11, 31, 58, 0.55)), url('{% static 'images/YakBackgroundV2.jpg' %}');"></div> -->
+                <!-- <div class="auth-bg-slide" style="background-image: linear-gradient(rgba(228, 255, 203, 0.55), rgba(11, 31, 58, 0.55)), url('{% static 'images/YakBackgroundV3.jpg' %}');"></div> -->
                 <div class="auth-bg-slide" style="background-image: linear-gradient(rgba(228, 255, 203, 0.55), rgba(11, 31, 58, 0.55)), url('{% static 'images/YakBackgroundV4.png' %}');"></div>
             </div>
 
